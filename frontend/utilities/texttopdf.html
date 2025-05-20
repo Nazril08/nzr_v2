@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to PDF Converter - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            appearance: none;
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-message {
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .info {
+            background-color: rgba(96, 165, 250, 0.2);
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        
+        .error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .preview-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 2rem;
+        }
+        
+        .preview-header {
+            background: linear-gradient(to right, #f9fafb, #f3f4f6);
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-weight: 600;
+            color: #374151;
+            margin-left: 0.5rem;
+        }
+        
+        .pdf-viewer {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        
+        @media (max-width: 640px) {
+            .btn {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .pdf-viewer {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">Text to PDF Converter</h1>
+
+        <div class="glassmorphism p-6 sm:p-8 form-card">
+            <!-- Tips Section -->
+            <div class="tips-container p-4 mb-6">
+                <div class="flex items-start">
+                    <div class="text-blue-500 mr-3 mt-1">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                        <ul class="text-sm space-y-2 text-blue-800">
+                            <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Enter your text and customize the PDF appearance</li>
+                            <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Choose from various fonts and formatting options</li>
+                            <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Add headers, footers, and watermarks as needed</li>
+                            <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Preview and download your generated PDF</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="space-y-6">
+                <!-- Text Input -->
+                <div class="form-group">
+                    <label for="text" class="form-label">Text Content</label>
+                    <textarea id="text" rows="6" class="form-input" placeholder="Enter your text here..."></textarea>
+                </div>
+
+                <!-- Font Settings -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="font" class="form-label">Font</label>
+                        <select id="font" class="form-input form-select">
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times">Times</option>
+                            <option value="Courier">Courier</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fontSize" class="form-label">Font Size</label>
+                        <input type="number" id="fontSize" value="12" min="8" max="72" class="form-input">
+                    </div>
+                </div>
+
+                <!-- Alignment -->
+                <div class="form-group">
+                    <label for="align" class="form-label">Text Alignment</label>
+                    <select id="align" class="form-input form-select">
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                        <option value="justify">Justify</option>
+                    </select>
+                </div>
+
+                <!-- Document Settings -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="title" class="form-label">Document Title</label>
+                        <input type="text" id="title" class="form-input" placeholder="Optional title">
+                    </div>
+                    <div class="form-group">
+                        <label for="header" class="form-label">Header Text</label>
+                        <input type="text" id="header" class="form-input" placeholder="Optional header">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="footer" class="form-label">Footer Text</label>
+                        <input type="text" id="footer" class="form-input" placeholder="Optional footer">
+                    </div>
+                    <div class="form-group">
+                        <label for="watermark" class="form-label">Watermark URL</label>
+                        <input type="text" id="watermark" class="form-input" placeholder="Optional watermark image URL">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="wmSize" class="form-label">Watermark Size</label>
+                    <input type="range" id="wmSize" value="30" min="10" max="100" class="form-input" oninput="this.nextElementSibling.value = this.value">
+                    <output class="text-sm text-gray-600 mt-1 block">30</output>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <i class="fas fa-file-pdf btn-icon"></i>Generate PDF
+                    </button>
+                    <button id="downloadBtn" class="btn btn-success hidden">
+                        <i class="fas fa-download btn-icon"></i>Download PDF
+                    </button>
+                </div>
+
+                <!-- Status Message -->
+                <div id="status" class="status-message hidden"></div>
+            </div>
+
+            <!-- PDF Preview -->
+            <div id="result" class="preview-container hidden">
+                <div class="preview-header">
+                    <i class="fas fa-file-pdf text-red-500"></i>
+                    <h3 class="preview-title">PDF Preview</h3>
+                </div>
+                <iframe id="pdfViewer" class="pdf-viewer"></iframe>
+            </div>
+        </div>
+        
+        <!-- Return to Home Button -->
+        <div class="text-center mt-6">
+            <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="../../backend/utilities/texttopdf.js"></script>
+    <script>
+        // No need for toggleSidebar function as we've removed references to sidebar and overlay
+        
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+            // Mobile menu functionality if needed
+        });
+        
+        // Set initial active state based on current category
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryItems = document.querySelectorAll('.category-item');
+            categoryItems.forEach(item => {
+                if (item.textContent === 'Tools') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Update the status message display function
+            const originalConverter = window.TextToPDFConverter.prototype.showStatus;
+            if (originalConverter) {
+                window.TextToPDFConverter.prototype.showStatus = function(message, type = 'info') {
+                    if (!this.elements.status) return;
+                    
+                    this.elements.status.textContent = message;
+                    this.elements.status.className = 'status-message';
+                    
+                    if (type === 'info') {
+                        this.elements.status.classList.add('info');
+                    } else if (type === 'success') {
+                        this.elements.status.classList.add('success');
+                    } else if (type === 'error') {
+                        this.elements.status.classList.add('error');
+                    }
+                    
+                    this.elements.status.classList.remove('hidden');
+                };
+            }
+        });
+    </script>
+</body>
+</html> 

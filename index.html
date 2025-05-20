@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Tools - Your Creative Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Base styles */
+        .card {
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .category-item {
+            transition: all 0.2s ease;
+        }
+        .category-item:hover {
+            background-color: #f3f4f6;
+        }
+        .category-item.active {
+            background-color: #000;
+            color: white;
+        }
+        .integration-card {
+            transition: all 0.3s ease;
+            display: block;
+        }
+        .integration-card.hidden {
+            display: none;
+        }
+
+        .logo {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .categories-section {
+            padding: 1.5rem;
+        }
+
+        .categories-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+
+        .category-item {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .category-item:hover {
+            background-color: #f3f4f6;
+            color: #2563eb;
+        }
+
+        .category-item.active {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background: white;
+                transition: transform 0.3s ease-in-out;
+                transform: translateX(-100%);
+                z-index: 1000;
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .logo {
+                position: relative;
+                display: block;
+                text-align: center;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                left: 0;
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                opacity: 0;
+                transition: opacity 0.3s ease-in-out;
+            }
+            .overlay.active {
+                display: block;
+                opacity: 1;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding-top: 4rem;
+            }
+            .search-box {
+                width: 100% !important;
+                max-width: 200px;
+            }
+            .pagination-controls {
+                padding: 0.5rem;
+            }
+            .pagination-controls button {
+                padding: 0.5rem !important;
+                font-size: 0.875rem !important;
+            }
+        }
+
+        /* Tablet styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 769px) {
+            .logo {
+                position: relative;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 256px;
+                height: 100vh;
+                overflow-y: auto;
+                background: white;
+                border-right: 1px solid #e5e7eb;
+            }
+            .main-content {
+                margin-left: 256px;
+            }
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* Fixed elements */
+        .fixed-pagination {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 1rem;
+            z-index: 900;
+        }
+        @media (min-width: 769px) {
+            .fixed-pagination {
+                left: 256px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="w-full bg-white py-10 px-4 shadow-sm mb-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Welcome to nzr Tools</h1>
+            <p class="text-lg text-gray-500 mb-6">Your all-in-one creative toolkit for AI tools, image processing, and content creation.</p>
+            <!-- Category Pills -->
+            <div class="flex flex-wrap justify-center gap-3 mb-6" id="categoryPills">
+                <button class="category-pill active" data-category="all">All Tools</button>
+                <button class="category-pill" data-category="AI">AI Tools</button>
+                <button class="category-pill" data-category="image">Image Tools</button>
+                <button class="category-pill" data-category="tools">Utilities</button>
+                <button class="category-pill" data-category="downloader">Social Media</button>
+            </div>
+            <!-- Search Bar -->
+            <div class="flex justify-center">
+                <input type="text" id="searchBox" placeholder="🔍 Search tools..." class="w-full max-w-lg px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base shadow-sm" onkeyup="searchTools()">
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="toolsGrid">
+            <!-- AI Category -->
+            <!-- Other AI cards -->
+            <a href="frontend/utilities/texttopdf.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="text to pdf converter document generator pdf creator text conversion document formatting" data-category="tools">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Text to PDF Converter</h3>
+                <p class="text-gray-600">Convert text to professional PDF documents with custom formatting, headers, and watermarks.</p>
+            </a>
+            <a href="frontend/ai/gpt4o.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="gpt-4o turbo assistant ai advanced chatbot smart conversation artificial intelligence chat helper gpt4 multilingual translator writer" data-category="AI">
+                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">GPT-4o Turbo Assistant</h3>
+                <p class="text-gray-600">Advanced AI assistant with conversation capabilities across topics, creative writing, problem-solving, and image analysis.</p>
+            </a>
+            <a href="frontend/ai/upscale.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="ai image upscaler artificial intelligence image enhancement super resolution upscale enlarge resize high quality" data-category="AI">
+                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">AI Image Upscaler</h3>
+                <p class="text-gray-600">Enhance and upscale your images with AI technology up to 8x resolution while maintaining quality.</p>
+            </a>
+            <a href="frontend/ai/textnote.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="text to note handwritten notes generator handwriting converter student notes digital to analog ai note maker" data-category="tools">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Text to Handwritten Note</h3>
+                <p class="text-gray-600">Convert digital text into realistic handwritten notes with customizable styles and formatting.</p>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let filteredCards = [];
+        let currentCategory = 'all';
+
+        document.querySelectorAll('.category-pill').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.getAttribute('data-category').toLowerCase();
+                filterByCategory(currentCategory);
+            });
+        });
+
+        function filterByCategory(category) {
+            currentCategory = category.toLowerCase();
+            const cards = Array.from(document.querySelectorAll('.integration-card'));
+            if (currentCategory === 'all') {
+                filteredCards = cards;
+            } else {
+                filteredCards = cards.filter(card => card.getAttribute('data-category').toLowerCase() === currentCategory);
+            }
+            document.getElementById('searchBox').value = '';
+            showFilteredCards();
+        }
+
+        function searchTools() {
+            const searchInput = document.getElementById('searchBox').value.toLowerCase().trim();
+            const cards = Array.from(document.querySelectorAll('.integration-card'));
+            let activeCategory = document.querySelector('.category-pill.active').getAttribute('data-category').toLowerCase();
+            let tempCards = cards.filter(card => {
+                const cardCategory = card.getAttribute('data-category').toLowerCase();
+                return activeCategory === 'all' || cardCategory === activeCategory;
+            });
+            if (searchInput !== '') {
+                tempCards = tempCards.filter(card => {
+                    const searchData = card.getAttribute('data-name').toLowerCase();
+                    const cardCategory = card.getAttribute('data-category').toLowerCase();
+                    return searchData.includes(searchInput) || cardCategory.includes(searchInput);
+                });
+            }
+            filteredCards = tempCards;
+            showFilteredCards();
+        }
+
+        function showFilteredCards() {
+            document.querySelectorAll('.integration-card').forEach(card => {
+                card.classList.add('hidden');
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+            });
+            filteredCards.forEach((card, index) => {
+                card.classList.remove('hidden');
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 50 * index);
+            });
+        }
+
+        document.getElementById('searchBox').addEventListener('input', searchTools);
+        document.addEventListener('DOMContentLoaded', function() {
+            filterByCategory('all');
+        });
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                body.style.overflow = '';
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                body.style.overflow = 'hidden';
+            }
+        }
+
+        // Close sidebar when clicking overlay
+        document.getElementById('overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'overlay') {
+                toggleSidebar();
+            }
+        });
+
+        // Close sidebar when pressing Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('sidebar').classList.contains('open')) {
+                toggleSidebar();
+            }
+        });
+
+        // Initialize mobile menu button
+        document.getElementById('mobileMenuBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-4o Turbo Assistant - Your AI Companion</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="style.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+            --chat-user: linear-gradient(135deg, #e5edff 0%, #d2e3ff 100%);
+            --chat-ai: linear-gradient(135deg, #f0f0f0 0%, #e6e6e6 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        
+        .chat-container {
+            height: calc(100vh - 260px);
+            min-height: 450px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .chat-header {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .chat-messages {
+            height: calc(100% - 130px);
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+        
+        .user-message {
+            background: var(--chat-user);
+            border-radius: 18px 18px 0 18px;
+            align-self: flex-end;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
+            margin-left: auto;
+        }
+        
+        .assistant-message {
+            background: var(--chat-ai);
+            border-radius: 18px 18px 18px 0;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
+            border-left: 3px solid var(--primary-light);
+        }
+        
+        .chat-input-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #eaeaea;
+            border-radius: 0 0 16px 16px;
+        }
+        
+        .message-input {
+            border-radius: 24px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            padding-right: 100px;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .message-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .send-button {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.4);
+        }
+        
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
+        }
+        
+        .session-badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .feature-card {
+            transition: all 0.4s ease;
+            border: 1px solid #f0f0f0;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        .icon-container {
+            background: linear-gradient(135deg, #e9eeff 0%, #d8e3ff 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .icon-container {
+            background: linear-gradient(135deg, #dae7ff 0%, #c7d6ff 100%);
+        }
+        
+        .feature-icon {
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        
+        .new-chat-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .new-chat-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-dark);
+        }
+        
+        .back-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        .back-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+            transform: translateX(-100%);
+        }
+        
+        .back-btn:hover:before {
+            animation: shine 0.8s;
+        }
+        
+        @keyframes shine {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #888;
+            border-radius: 50%;
+            opacity: 0;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingAnimation {
+            0% { transform: translateY(0); opacity: 0.5; }
+            25% { transform: translateY(-5px); opacity: 1; }
+            50% { transform: translateY(0); opacity: 0.5; }
+            100% { transform: translateY(0); opacity: 0.5; }
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                height: calc(100vh - 180px);
+            }
+            
+            .chat-messages {
+                height: calc(100% - 120px);
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="w-full bg-white py-8 px-4 shadow-sm mb-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-900 mb-3">GPT-4o Turbo Assistant</h1>
+            <p class="text-lg text-gray-600 mb-4">Powered by advanced AI for conversation, creativity, and problem-solving</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-4">
+        <div class="glassmorphism rounded-xl overflow-hidden">
+            <!-- Chat Interface -->
+            <div class="chat-container flex flex-col">
+                <!-- Chat Header -->
+                <div class="chat-header flex justify-between items-center">
+                    <span id="sessionDisplay" class="session-badge">
+                        Starting new session...
+                    </span>
+                    <div class="flex items-center space-x-3">
+                        <button id="newChatBtn" class="new-chat-btn text-sm text-white px-3 py-1 rounded-full flex items-center">
+                            <i class="fas fa-plus-circle mr-1"></i>New Chat
+                        </button>
+                        <a href="index.html" class="back-btn text-sm text-white px-3 py-1 rounded-full flex items-center bg-gradient-to-r from-indigo-400 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 transition-all shadow-md">
+                            <i class="fas fa-home mr-1"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Chat Messages Container -->
+                <div id="chatMessages" class="chat-messages flex flex-col space-y-5"></div>
+                
+                <!-- Message Input Form -->
+                <div class="chat-input-container">
+                    <div class="relative">
+                        <input type="text" id="messageInput" class="message-input w-full px-5 py-3.5 focus:outline-none placeholder-gray-400 text-sm" placeholder="Ask me anything...">
+                        <button id="sendButton" class="send-button absolute right-2 top-1.5 text-white px-5 py-2 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fas fa-paper-plane mr-1"></i>Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="mt-12 mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-800">What Can This AI Assistant Do?</h2>
+            <p class="text-center text-gray-600 mb-8">Versatile AI helper for all your needs - creative, technical, and informational</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 feature-grid">
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <div class="w-12 h-12 icon-container rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-comment-dots text-xl feature-icon"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Answer Questions</h3>
+                    <p class="text-gray-600">From academic and technical queries to general information and advice.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <div class="w-12 h-12 icon-container rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-feather-alt text-xl feature-icon"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Create Content</h3>
+                    <p class="text-gray-600">Generate creative writing like stories, poems, lyrics, and scripts.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <div class="w-12 h-12 icon-container rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-code text-xl feature-icon"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Help With Code</h3>
+                    <p class="text-gray-600">Assist with programming, debugging and explaining technical concepts.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <div class="w-12 h-12 icon-container rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-file-alt text-xl feature-icon"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Professional Writing</h3>
+                    <p class="text-gray-600">Help draft reports, papers, emails, and other formal documents.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <div class="w-12 h-12 icon-container rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-memory text-xl feature-icon"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Remember Context</h3>
+                    <p class="text-gray-600">Maintain conversation history across multiple exchanges in a session.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const API_URL = 'https://fastrestapis.fasturl.cloud/aillm/gpt-4o-turbo';
+        
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const sessionDisplay = document.getElementById('sessionDisplay');
+        
+        // State Variables
+        let currentSessionId = '';
+        let isWaitingForResponse = false;
+        
+        // Initialize
+        function init() {
+            // Generate a new session ID on page load
+            currentSessionId = generateSessionId();
+            sessionDisplay.textContent = `Session ID: ${currentSessionId}`;
+            
+            // Add welcome message
+            addMessage('assistant', 'Halo! Saya siap membantu Anda dengan berbagai kebutuhan, mulai dari menjawab pertanyaan hingga menulis konten kreatif. Silakan beri tahu saya apa yang Anda butuhkan saat ini!');
+            
+            // Setup event listeners
+            setupEventListeners();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Send message on button click
+            sendButton.addEventListener('click', handleSendMessage);
+            
+            // Send message on Enter key
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSendMessage();
+                }
+            });
+            
+            // Start a new chat
+            newChatBtn.addEventListener('click', startNewChat);
+        }
+        
+        // Handle sending a message
+        async function handleSendMessage() {
+            const message = messageInput.value.trim();
+            
+            // Don't send empty messages or if we're waiting for a response
+            if (message === '' || isWaitingForResponse) return;
+            
+            // Add the user message to the chat
+            addMessage('user', message);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Set waiting state
+            isWaitingForResponse = true;
+            
+            // Add typing indicator
+            const typingIndicator = addTypingIndicator();
+            
+            try {
+                // Send to API
+                const response = await queryGPT4oTurbo(message, '', '', currentSessionId);
+                
+                // Remove typing indicator
+                chatMessages.removeChild(typingIndicator);
+                
+                // Process and add the response
+                if (response && response.result) {
+                    addMessage('assistant', response.result);
+                } else {
+                    throw new Error('Invalid response from API');
+                }
+            } catch (error) {
+                // Remove typing indicator
+                chatMessages.removeChild(typingIndicator);
+                
+                // Add error message
+                addMessage('assistant', `Error: ${error.message || 'Failed to get response from the AI. Please try again.'}`);
+            } finally {
+                // Reset waiting state
+                isWaitingForResponse = false;
+            }
+            
+            // Scroll to bottom
+            scrollToBottom();
+        }
+        
+        // Add a message to the chat
+        function addMessage(type, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `${type}-message p-4 max-w-[80%] mb-2 text-sm fade-in`;
+            
+            // Add sender label
+            const senderLabel = document.createElement('div');
+            senderLabel.className = `font-semibold text-xs mb-1 ${type === 'user' ? 'text-indigo-800' : 'text-gray-700'}`;
+            senderLabel.textContent = type === 'user' ? 'You' : 'AI Assistant';
+            messageDiv.appendChild(senderLabel);
+            
+            // Add message content with proper formatting
+            const messageContent = document.createElement('div');
+            messageContent.className = 'whitespace-pre-wrap';
+            messageContent.textContent = content;
+            messageDiv.appendChild(messageContent);
+            
+            // Add timestamp
+            const timestamp = document.createElement('div');
+            timestamp.className = 'text-xs text-gray-500 mt-2 text-right';
+            timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageDiv.appendChild(timestamp);
+            
+            // Add to chat container
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to the new message
+            scrollToBottom();
+        }
+        
+        // Add typing indicator while waiting for response
+        function addTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'assistant-message typing-indicator max-w-[80%] mb-4';
+            indicator.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatMessages.appendChild(indicator);
+            scrollToBottom();
+            return indicator;
+        }
+        
+        // Scroll chat to bottom
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Start a new chat session
+        function startNewChat() {
+            // Generate a new session ID
+            currentSessionId = generateSessionId();
+            sessionDisplay.textContent = `Session ID: ${currentSessionId}`;
+            
+            // Clear chat messages
+            chatMessages.innerHTML = '';
+            
+            // Add welcome message
+            addMessage('assistant', 'Halo! Saya siap membantu Anda dengan berbagai kebutuhan, mulai dari menjawab pertanyaan hingga menulis konten kreatif. Silakan beri tahu saya apa yang Anda butuhkan saat ini!');
+        }
+        
+        // Generate a random session ID
+        function generateSessionId() {
+            return 'session_' + Math.random().toString(36).substring(2, 15) + 
+                               Math.random().toString(36).substring(2, 15);
+        }
+        
+        // Query the GPT-4o Turbo API
+        async function queryGPT4oTurbo(query, imageUrl = '', style = '', sessionId = '') {
+            try {
+                const params = new URLSearchParams();
+                
+                // Required parameter
+                params.append('ask', query);
+                
+                // Optional parameters
+                if (imageUrl) params.append('imageUrl', imageUrl);
+                if (style) params.append('style', style);
+                if (sessionId) params.append('sessionId', sessionId);
+                
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                const response = await fetch(`${API_URL}?${params.toString()}`, {
+                    method: 'GET',
+                    headers: headers
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Error querying GPT-4o Turbo:', error);
+                throw error;
+            }
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html> 
