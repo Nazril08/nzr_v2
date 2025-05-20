@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Extender - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #6b7280, #4b5563);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(107, 114, 128, 0.3);
+        }
+        
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .drop-zone {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        
+        .drop-zone:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(239, 246, 255, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .drop-zone-icon {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone:hover .drop-zone-icon {
+            background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+            transform: scale(1.05);
+        }
+        
+        .status-message {
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .info {
+            background-color: rgba(96, 165, 250, 0.2);
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        
+        .error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .image-container:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-label {
+            background: linear-gradient(to right, #f9fafb, #f3f4f6);
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+        }
+        
+        .image-label-icon {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .comparison-container {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .comparison-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .preview-img-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .preview-img-container:hover .remove-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 1rem 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .divider::before {
+            margin-right: 1rem;
+        }
+        
+        .divider::after {
+            margin-left: 1rem;
+        }
+
+        .pixel-inputs {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.6), rgba(219, 234, 254, 0.6));
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">AI Image Extender</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Maximum file size: 5MB</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Supported formats: JPG, PNG, and WebP</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Pixel extension: Up to 300 pixels per side</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Best results with clear boundaries and simple backgrounds</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glassmorphism p-6 sm:p-8 mb-6">
+            <div class="space-y-6">
+                <!-- File Upload -->
+                <div class="space-y-4">
+                    <!-- URL Input -->
+                    <div class="space-y-2">
+                        <label for="imageUrl" class="form-label">Image URL</label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="url" id="imageUrl" 
+                                class="form-input flex-1"
+                                placeholder="https://example.com/image.jpg">
+                            <button id="fetchUrlBtn" 
+                                class="btn btn-secondary">
+                                <i class="fas fa-cloud-download-alt btn-icon"></i>Fetch Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="divider">OR</div>
+
+                    <!-- Drag & Drop Zone -->
+                    <div class="drop-zone text-center">
+                        <input type="file" id="imageFile" class="hidden" accept="image/jpeg,image/png,image/webp">
+                        <div class="space-y-4">
+                            <div class="drop-zone-icon">
+                                <i class="fas fa-cloud-upload-alt text-blue-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-700 font-medium">Drag and drop your image here, or click to select</p>
+                                <p class="text-sm text-gray-500 mt-2">JPG, PNG, or WebP, max 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Preview -->
+                <div id="imagePreview" class="hidden">
+                    <div class="preview-img-container">
+                        <img id="previewImg" class="w-full h-auto rounded-lg" alt="Preview">
+                        <button id="removeImage" class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Extend Options -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700">Extension Settings</h3>
+                    <p class="text-sm text-gray-500">Specify how many pixels to extend on each side (0-300)</p>
+                    
+                    <div class="pixel-inputs">
+                        <div>
+                            <label for="leftPixels" class="form-label">Left</label>
+                            <input type="number" id="leftPixels" min="0" max="300" value="150" class="form-input">
+                        </div>
+                        <div>
+                            <label for="rightPixels" class="form-label">Right</label>
+                            <input type="number" id="rightPixels" min="0" max="300" value="150" class="form-input">
+                        </div>
+                        <div>
+                            <label for="topPixels" class="form-label">Top</label>
+                            <input type="number" id="topPixels" min="0" max="300" value="150" class="form-input">
+                        </div>
+                        <div>
+                            <label for="bottomPixels" class="form-label">Bottom</label>
+                            <input type="number" id="bottomPixels" min="0" max="300" value="150" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <button id="extendBtn" class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <span class="flex items-center justify-center">
+                                <svg id="loadingIcon" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <i class="fas fa-expand-alt btn-icon"></i>Extend Image
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Status Message -->
+                <div id="status" class="hidden status-message"></div>
+
+                <!-- Result Section -->
+                <div id="result" class="hidden result space-y-6">
+                    <div class="comparison-container">
+                        <div class="image-container">
+                            <div class="image-label">
+                                <i class="fas fa-image image-label-icon"></i>
+                                Original Image
+                            </div>
+                            <img id="originalImage" class="w-full h-auto" alt="Original">
+                        </div>
+                        <div class="image-container">
+                            <div class="image-label">
+                                <i class="fas fa-expand image-label-icon"></i>
+                                Extended Image
+                            </div>
+                            <img id="extendedImage" class="w-full h-auto" alt="Extended">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <a id="downloadBtn" class="btn btn-success">
+                            <i class="fas fa-download btn-icon"></i>
+                            Download Extended Image
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Return to Home Button -->
+        <div class="text-center">
+            <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="../../backend/ai/imgextender.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Drop Zone functionality
+            const dropZone = document.querySelector('.drop-zone');
+            const fileInput = document.getElementById('imageFile');
+            
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-blue-500', 'bg-blue-50');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    // The file handling logic is in the main JS file
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

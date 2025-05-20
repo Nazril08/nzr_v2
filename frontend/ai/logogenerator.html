@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Logo Generator - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            appearance: none;
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-message {
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .image-container {
+            position: relative;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            background-color: #f9fafb;
+        }
+        
+        .image-container:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">AI Logo Generator</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Enter a clear, distinctive brand name</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Provide a detailed description of your desired logo</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Select the industry that best matches your business</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Choose a style that aligns with your brand identity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glassmorphism p-6 sm:p-8 mb-6">
+            <div class="space-y-6">
+                <!-- Logo Generator Form -->
+                <div class="space-y-4">
+                    <!-- Brand Name -->
+                    <div>
+                        <label for="brandName" class="form-label">Brand Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="brandName" class="form-input" placeholder="Enter your brand name">
+                    </div>
+                    
+                    <!-- Logo Description -->
+                    <div>
+                        <label for="prompt" class="form-label">Logo Description</label>
+                        <textarea id="prompt" class="form-input" rows="3" placeholder="Describe the logo design you want (e.g., A modern logo with a futuristic feel)"></textarea>
+                    </div>
+                    
+                    <!-- Industry Selection -->
+                    <div>
+                        <label for="industry" class="form-label">Industry</label>
+                        <select id="industry" class="form-input form-select">
+                            <option value="Technology">Technology</option>
+                            <option value="Real Estate">Real Estate</option>
+                            <option value="Health & Wellness">Health & Wellness</option>
+                            <option value="Food & Restaurant">Food & Restaurant</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Education">Education</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Style Selection -->
+                    <div>
+                        <label for="style" class="form-label">Logo Style</label>
+                        <select id="style" class="form-input form-select">
+                            <option value="Minimalist">Minimalist</option>
+                            <option value="3D">3D</option>
+                            <option value="Hand-drawn">Hand-drawn</option>
+                            <option value="Vintage">Vintage</option>
+                            <option value="Abstract">Abstract</option>
+                            <option value="Geometric">Geometric</option>
+                            <option value="Mascot">Mascot</option>
+                            <option value="Flat">Flat</option>
+                        </select>
+                    </div>
+                    
+                    <!-- API Key (Optional) -->
+                    <div>
+                        <label for="apiKey" class="form-label">API Key <span class="text-gray-500 text-xs">(Optional)</span></label>
+                        <input type="text" id="apiKey" class="form-input" placeholder="Enter your API key if you have one">
+                        <p class="text-xs text-gray-500 mt-1">If you already have an API key, enter it here. Otherwise, leave it blank.</p>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="flex justify-center">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <span class="flex items-center justify-center">
+                            <svg id="loadingIcon" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <i class="fas fa-paint-brush btn-icon mr-2"></i>Generate Logo
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Status Message -->
+                <div id="status" class="hidden status-message"></div>
+
+                <!-- Result Section -->
+                <div id="result" class="hidden result space-y-6">
+                    <div class="image-container max-w-lg mx-auto">
+                        <img id="logoImage" class="w-full h-auto" alt="Generated Logo">
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <a id="downloadBtn" class="btn btn-success" download>
+                            <i class="fas fa-download mr-2"></i>
+                            Download Logo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Return to Home Button -->
+        <div class="text-center">
+            <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="../../backend/ai/logogenerator.js"></script>
+</body>
+</html> 
