@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Maker - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        
+        .result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .calendar-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .calendar-container:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-container {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-container input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:focus + .toggle-slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">Custom Calendar Maker</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Choose a color scheme that matches your brand or event</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Include holidays for reference when planning events</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Select a header style that best fits your aesthetic preferences</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Generated calendars can be downloaded and printed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glassmorphism p-6 sm:p-8 mb-6">
+            <div class="space-y-6">
+                <!-- Month and Year Input -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="monthSelect" class="form-label">Month</label>
+                        <select id="monthSelect" class="form-input">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="yearInput" class="form-label">Year</label>
+                        <input type="number" id="yearInput" class="form-input" min="1900" max="2100" placeholder="Enter year (1900-2100)">
+                    </div>
+                </div>
+
+                <!-- Customization Options -->
+                <div>
+                    <label for="colorSchemeSelect" class="form-label">Color Scheme</label>
+                    <select id="colorSchemeSelect" class="form-input">
+                        <option value="classic">Classic</option>
+                        <option value="modern">Modern</option>
+                        <option value="vibrant">Vibrant</option>
+                        <option value="pastel">Pastel</option>
+                        <option value="monochrome">Monochrome</option>
+                        <option value="dark">Dark</option>
+                        <option value="corporate">Corporate</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="headerStyleSelect" class="form-label">Header Style</label>
+                    <select id="headerStyleSelect" class="form-input">
+                        <option value="standard">Standard</option>
+                        <option value="compact">Compact</option>
+                        <option value="elegant">Elegant</option>
+                        <option value="bold">Bold</option>
+                        <option value="minimalist">Minimalist</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center">
+                    <div class="mr-4">
+                        <label class="form-label">Include Holidays</label>
+                    </div>
+                    <label class="toggle-container">
+                        <input type="checkbox" id="includeHolidays" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- API Key (Optional) -->
+                <div>
+                    <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
+                    <input type="text" id="apiKeyInput" class="form-input" placeholder="If you have an API key, enter it here...">
+                    <p class="text-xs text-gray-500 mt-1">Only required for protected endpoints. Not required for free usage.</p>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="flex justify-center">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <span class="flex items-center justify-center">
+                            <svg id="loadingIcon" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <i class="fas fa-calendar-alt btn-icon mr-2"></i>Generate Calendar
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Status Message -->
+                <div id="status" class="hidden mt-4 text-center p-3 rounded-lg"></div>
+
+                <!-- Result Container -->
+                <div id="resultContainer" class="hidden result space-y-6">
+                    <div id="calendarDisplay" class="calendar-container max-w-3xl mx-auto">
+                        <!-- Calendar will be displayed here -->
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <a id="downloadBtn" class="btn btn-success" download="calendar.png">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Calendar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Return to Home Button -->
+        <div class="text-center">
+            <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="../../backend/utilities/calendarmaker.js"></script>
+</body>
+</html> 

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Image Generator - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        
+        .result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .image-container:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-preview {
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .avatar-preview {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+        
+        .color-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid #e5e7eb;
+            vertical-align: middle;
+        }
+        
+        .color-selector {
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider-value {
+            width: 40px;
+            text-align: center;
+            margin-left: 10px;
+        }
+        
+        .example-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">Welcome Image Generator</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Use square images for the avatar (profile picture)</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Choose a high-quality background image that complements your avatar</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Adjust the overlay opacity to ensure text remains readable</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Perfect for creating server welcome screens, community greetings, or social media banners</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Image -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Example Output</h3>
+            <div class="flex justify-center">
+                <img src="https://fastrestapis.fasturl.cloud/canvas/welcome?avatar=https%3A%2F%2Ffastmanager.fasturl.cloud%2FUploads%2FHikaru-PP.png&background=https%3A%2F%2Ffastmanager.fasturl.cloud%2FUploads%2FHikaru-BG.png&title=Welcome%2C%20Hikaru&description=Welcome%20to%20this%20server%2C%20go%20read%20the%20rules%20please%21&borderColor=2a2e35&avatarBorderColor=2a2e35&overlayOpacity=0.5" 
+                     alt="Example Welcome Image" 
+                     class="example-image">
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glassmorphism p-6 sm:p-8 mb-6">
+            <div class="space-y-6">
+                <!-- Avatar and Background URLs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="avatarUrlInput" class="form-label">Avatar Image URL <span class="text-red-500">*</span></label>
+                        <input type="text" id="avatarUrlInput" class="form-input" placeholder="Enter URL of your avatar/profile image">
+                        
+                        <!-- Avatar Preview -->
+                        <div id="avatarPreviewContainer" class="hidden mt-3 flex justify-center">
+                            <div class="p-2 bg-white rounded-full shadow-sm">
+                                <img id="previewAvatar" class="avatar-preview" alt="Avatar preview" src="">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="backgroundUrlInput" class="form-label">Background Image URL <span class="text-red-500">*</span></label>
+                        <input type="text" id="backgroundUrlInput" class="form-input" placeholder="Enter URL of your background image">
+                        
+                        <!-- Background Preview -->
+                        <div id="backgroundPreviewContainer" class="hidden mt-3">
+                            <img id="previewBackground" class="image-preview w-full h-32 object-cover" alt="Background preview" src="">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Title and Description -->
+                <div>
+                    <label for="titleInput" class="form-label">Welcome Title <span class="text-red-500">*</span></label>
+                    <input type="text" id="titleInput" class="form-input" placeholder="Enter welcome title (e.g., 'Welcome, Username')">
+                </div>
+                <div>
+                    <label for="descriptionInput" class="form-label">Welcome Description</label>
+                    <textarea id="descriptionInput" class="form-input h-20" placeholder="Enter welcome description or instructions"></textarea>
+                </div>
+
+                <!-- Color Options -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">Border Color</label>
+                        <div class="color-selector">
+                            <div id="borderColorPreview" class="color-preview mr-2"></div>
+                            <input type="text" id="borderColorInput" class="form-input" placeholder="#2a2e35" value="#2a2e35">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label">Avatar Border Color</label>
+                        <div class="color-selector">
+                            <div id="avatarBorderColorPreview" class="color-preview mr-2"></div>
+                            <input type="text" id="avatarBorderColorInput" class="form-input" placeholder="#2a2e35" value="#2a2e35">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overlay Opacity -->
+                <div>
+                    <label for="overlayOpacityInput" class="form-label">Overlay Opacity (0-1)</label>
+                    <div class="slider-container">
+                        <input type="range" id="overlayOpacityInput" class="w-full form-input" min="0" max="1" step="0.1" value="0.5">
+                        <span id="opacityValue" class="slider-value">0.5</span>
+                    </div>
+                </div>
+
+                <!-- API Key (Optional) -->
+                <div>
+                    <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
+                    <input type="text" id="apiKeyInput" class="form-input" placeholder="If you have an API key, enter it here...">
+                    <p class="text-xs text-gray-500 mt-1">Only required for protected endpoints. Not required for free usage.</p>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="flex justify-center">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <span class="flex items-center justify-center">
+                            <svg id="loadingIcon" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <i class="fas fa-image btn-icon mr-2"></i>Generate Welcome Image
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Status Message -->
+                <div id="status" class="hidden mt-4 text-center p-3 rounded-lg"></div>
+
+                <!-- Result Container -->
+                <div id="resultContainer" class="hidden result space-y-6">
+                    <div class="image-container max-w-3xl mx-auto">
+                        <img id="resultImage" class="w-full h-auto rounded-lg" alt="Generated welcome image">
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <a id="downloadBtn" class="btn btn-success" download="welcome_image.png">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Welcome Image
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Return to Home Button -->
+        <div class="text-center">
+            <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="../../backend/utilities/welcomegenerator.js"></script>
+</body>
+</html> 
