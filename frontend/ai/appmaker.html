@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Maker - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #4b5563, #374151);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(75, 85, 99, 0.3);
+        }
+        
+        .result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tab {
+            padding: 0.75rem 1rem;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid #e5e7eb;
+            border-bottom-color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .color-preview {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid #e5e7eb;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">Web App Maker</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Use fully qualified URLs starting with http:// or https://</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Make sure your website is mobile-responsive for best appearance</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Square images work best for app icons (1:1 ratio)</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Rectangular images work best for splash screens (16:9 ratio)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <div id="createTab" class="tab active" onclick="showTab('create')">
+                Create App
+            </div>
+            <div id="checkTab" class="tab" onclick="showTab('check')">
+                Check Status
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="createContent" class="tab-content active">
+            <div class="glassmorphism p-6 sm:p-8 mb-6">
+                <div class="space-y-6">
+                    <!-- Website URL Input -->
+                    <div>
+                        <label for="urlInput" class="form-label">Website URL</label>
+                        <input type="url" id="urlInput" class="form-input" placeholder="https://example.com" value="https://nzr-one.vercel.app/index.html#AI">
+                    </div>
+
+                    <!-- App Name -->
+                    <div>
+                        <label for="nameInput" class="form-label">App Name</label>
+                        <input type="text" id="nameInput" class="form-input" placeholder="Your App Name" value="FastURL">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="emailInput" class="form-label">Email for Notifications</label>
+                        <input type="email" id="emailInput" class="form-input" placeholder="your@email.com" value="fasturl.cloud@gmail.com">
+                    </div>
+
+                    <!-- App Icon -->
+                    <div>
+                        <label for="appIconInput" class="form-label">App Icon URL (Square image recommended)</label>
+                        <input type="url" id="appIconInput" class="form-input" placeholder="https://example.com/icon.png" value="https://fastmanager.fasturl.cloud/Uploads/FastURL/FastURL---Favicon-Logo.png">
+                    </div>
+
+                    <!-- Splash Icon -->
+                    <div>
+                        <label for="splashIconInput" class="form-label">Splash Screen URL (16:9 image recommended)</label>
+                        <input type="url" id="splashIconInput" class="form-input" placeholder="https://example.com/splash.png" value="https://fastmanager.fasturl.cloud/Uploads/FastURL/FastURL---Thumbnail-Website.png">
+                    </div>
+
+                    <!-- Toolbar Settings -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="useToolbarCheckbox" class="w-4 h-4 mr-2" checked>
+                            <label for="useToolbarCheckbox" class="form-label mb-0">Show Toolbar</label>
+                        </div>
+                        
+                        <div>
+                            <label for="toolbarColorInput" class="form-label">Toolbar Color</label>
+                            <div class="flex items-center">
+                                <input type="color" id="toolbarColorInput" class="form-input w-20" value="#5303f4">
+                                <div class="color-preview ml-2" style="background-color: #5303f4;"></div>
+                                <span class="ml-2 text-sm text-gray-500">#5303f4</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="toolbarTitleColorInput" class="form-label">Toolbar Text Color</label>
+                            <div class="flex items-center">
+                                <input type="color" id="toolbarTitleColorInput" class="form-input w-20" value="#FFFFFF">
+                                <div class="color-preview ml-2" style="background-color: #FFFFFF;"></div>
+                                <span class="ml-2 text-sm text-gray-500">#FFFFFF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API Key (Optional) -->
+                    <div>
+                        <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
+                        <input type="text" id="apiKeyInput" class="form-input" placeholder="Your API key if you have one">
+                        <p class="text-xs text-gray-500 mt-1">Leave blank if you don't have an API key.</p>
+                    </div>
+
+                    <!-- Create Button -->
+                    <div class="flex justify-center pt-4">
+                        <button id="createAppBtn" class="btn btn-primary">
+                            <span class="mr-2">Create Web App</span>
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="checkContent" class="tab-content">
+            <div class="glassmorphism p-6 sm:p-8 mb-6">
+                <div class="space-y-6">
+                    <!-- App ID Input -->
+                    <div>
+                        <label for="appIdInput" class="form-label">App ID</label>
+                        <input type="text" id="appIdInput" class="form-input" placeholder="1234567890abcdef">
+                    </div>
+
+                    <!-- API Key (Optional) -->
+                    <div>
+                        <label for="apiKeyInput2" class="form-label">API Key (Optional)</label>
+                        <input type="text" id="apiKeyInput2" class="form-input" placeholder="Your API key if you have one">
+                        <p class="text-xs text-gray-500 mt-1">Leave blank if you don't have an API key.</p>
+                    </div>
+
+                    <!-- Check Button -->
+                    <div class="flex justify-center pt-4">
+                        <button id="checkStatusBtn" class="btn btn-secondary">
+                            <span class="mr-2">Check App Status</span>
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="loadingIcon" class="flex justify-center items-center py-8 hidden">
+            <svg class="animate-spin h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+
+        <!-- Status Message -->
+        <div id="status" class="hidden"></div>
+
+        <!-- Result Section -->
+        <div id="resultContainer" class="glassmorphism p-6 mt-8 hidden">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Result</h3>
+            <p id="resultText" class="text-gray-700 mb-4">App created successfully!</p>
+            <div class="flex justify-center">
+                <a id="resultLink" href="#" target="_blank" class="btn btn-primary hidden">
+                    <span class="mr-2">Download App</span>
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return to Home Button -->
+    <div class="text-center mt-8 mb-6">
+        <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+            <i class="fas fa-home mr-2"></i>Return to Home
+        </a>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabId}Content`).classList.add('active');
+            document.getElementById(`${tabId}Tab`).classList.add('active');
+        }
+        
+        // Update color preview when color input changes
+        document.getElementById('toolbarColorInput').addEventListener('input', function(e) {
+            const color = e.target.value;
+            e.target.nextElementSibling.style.backgroundColor = color;
+            e.target.nextElementSibling.nextElementSibling.textContent = color;
+        });
+        
+        document.getElementById('toolbarTitleColorInput').addEventListener('input', function(e) {
+            const color = e.target.value;
+            e.target.nextElementSibling.style.backgroundColor = color;
+            e.target.nextElementSibling.nextElementSibling.textContent = color;
+        });
+
+        // Make sure apiKeyInput2 syncs with apiKeyInput
+        document.getElementById('apiKeyInput').addEventListener('input', function(e) {
+            document.getElementById('apiKeyInput2').value = e.target.value;
+        });
+        
+        document.getElementById('apiKeyInput2').addEventListener('input', function(e) {
+            document.getElementById('apiKeyInput').value = e.target.value;
+        });
+    </script>
+    
+    <script src="../../backend/ai/appmaker.js"></script>
+</body>
+</html> 

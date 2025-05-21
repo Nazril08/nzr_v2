@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Phone Number Generator - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input, .form-select {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .number-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        
+        .number-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .success-message {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+        
+        .error-message {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            color: #b91c1c;
+        }
+        
+        .country-flag {
+            width: 24px;
+            height: 16px;
+            margin-right: 8px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">Fake Phone Number Generator</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Using Fake Numbers:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Perfect for UI mockups, sample data, and testing applications</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Generate numbers for different countries with proper formatting</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Copy individual numbers or copy all with a single click</li>
+                        <li><i class="fas fa-exclamation-triangle mr-2 text-yellow-500"></i>These numbers are for testing only and are not functional</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glassmorphism p-6 sm:p-8 mb-6">
+            <div class="space-y-6">
+                <!-- Country Selection -->
+                <div>
+                    <label for="countrySelect" class="form-label">Select Country</label>
+                    <select id="countrySelect" class="form-select">
+                        <!-- North America -->
+                        <optgroup label="North America">
+                            <option value="USA">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="MX">Mexico</option>
+                        </optgroup>
+                        <!-- Europe -->
+                        <optgroup label="Europe">
+                            <option value="UK">United Kingdom</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="IT">Italy</option>
+                            <option value="ES">Spain</option>
+                            <option value="NL">Netherlands</option>
+                            <option value="SE">Sweden</option>
+                            <option value="CH">Switzerland</option>
+                            <option value="NO">Norway</option>
+                            <option value="PL">Poland</option>
+                            <option value="PT">Portugal</option>
+                            <option value="RU">Russia</option>
+                        </optgroup>
+                        <!-- Asia -->
+                        <optgroup label="Asia">
+                            <option value="JP">Japan</option>
+                            <option value="CN">China</option>
+                            <option value="IN">India</option>
+                            <option value="KR">South Korea</option>
+                            <option value="SG">Singapore</option>
+                            <option value="MY">Malaysia</option>
+                            <option value="ID">Indonesia</option>
+                            <option value="TH">Thailand</option>
+                            <option value="PH">Philippines</option>
+                        </optgroup>
+                        <!-- Oceania -->
+                        <optgroup label="Oceania">
+                            <option value="AU">Australia</option>
+                            <option value="NZ">New Zealand</option>
+                        </optgroup>
+                        <!-- South America -->
+                        <optgroup label="South America">
+                            <option value="BR">Brazil</option>
+                            <option value="AR">Argentina</option>
+                            <option value="CL">Chile</option>
+                            <option value="CO">Colombia</option>
+                            <option value="PE">Peru</option>
+                        </optgroup>
+                        <!-- Africa -->
+                        <optgroup label="Africa">
+                            <option value="ZA">South Africa</option>
+                            <option value="EG">Egypt</option>
+                            <option value="NG">Nigeria</option>
+                            <option value="KE">Kenya</option>
+                            <option value="MA">Morocco</option>
+                        </optgroup>
+                        <!-- Middle East -->
+                        <optgroup label="Middle East">
+                            <option value="AE">United Arab Emirates</option>
+                            <option value="SA">Saudi Arabia</option>
+                            <option value="TR">Turkey</option>
+                            <option value="IL">Israel</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Number Count Selection -->
+                <div>
+                    <label for="countSelect" class="form-label">Number of Phone Numbers</label>
+                    <select id="countSelect" class="form-select">
+                        <option value="5">5 numbers</option>
+                        <option value="10" selected>10 numbers</option>
+                        <option value="15">15 numbers</option>
+                        <option value="20">20 numbers</option>
+                        <option value="30">30 numbers</option>
+                        <option value="50">50 numbers</option>
+                    </select>
+                </div>
+
+                <!-- API Key (Optional) -->
+                <div>
+                    <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
+                    <input type="text" id="apiKeyInput" class="form-input" placeholder="Your API key if you have one">
+                    <p class="text-xs text-gray-500 mt-1">Leave blank if you don't have an API key.</p>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="flex justify-center pt-4">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <span class="mr-2">Generate Phone Numbers</span>
+                        <i class="fas fa-phone-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="loadingIcon" class="flex justify-center items-center py-8 hidden">
+            <svg class="animate-spin h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+
+        <!-- Status Message -->
+        <div id="status" class="hidden p-4 rounded-lg my-6"></div>
+
+        <!-- Result Section -->
+        <div id="resultContainer" class="glassmorphism p-6 mt-8 hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Generated Phone Numbers</h3>
+                <button id="copyAllBtn" class="btn btn-secondary text-sm py-2 px-4">
+                    <i class="fas fa-copy mr-2"></i>Copy All
+                </button>
+            </div>
+            
+            <div id="numbersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Phone numbers will be inserted here dynamically -->
+            </div>
+        </div>
+        
+        <!-- Return to Home Button -->
+        <div class="text-center mt-8 mb-6">
+            <a href="../../index.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="../../backend/utilities/fakenumber.js"></script>
+</body>
+</html> 
