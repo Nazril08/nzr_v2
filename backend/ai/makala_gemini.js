@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 4. BAB I: PENDAHULUAN
 - Latar Belakang: Konteks, data, dan pentingnya topik
-- Rumusan Masalah: 3-5 pertanyaan penelitian spesifik
+- Rumusan Masalah: 3 pertanyaan penelitian spesifik
 - Tujuan Penelitian: Tujuan umum dan khusus
 - Manfaat Penelitian: Teoretis dan praktis
 
@@ -364,6 +364,9 @@ CATATAN:
         const judulValue = judul.value.trim() || 'Makalah';
         const sanitizedTitle = judulValue.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         
+        // Deteksi jika berjalan di perangkat mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
         // Create the HTML content for the document with improved formatting
         const htmlContent = `
         <!DOCTYPE html>
@@ -489,46 +492,132 @@ CATATAN:
         else if (format === 'pdf') {
             showStatus('Membuat file PDF...', 'info');
             
-            // Create a temporary container for PDF generation
-            const tempDiv = document.createElement('div');
-            tempDiv.style.width = '210mm'; // A4 width
-            tempDiv.style.margin = '0';
-            tempDiv.style.padding = '20mm';
-            tempDiv.style.visibility = 'hidden';
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.fontFamily = 'Times New Roman, Times, serif';
-            tempDiv.innerHTML = paperContent.innerHTML;
-            document.body.appendChild(tempDiv);
-            
-            // Use html2pdf.js to generate PDF
-            html2pdf()
-                .set({
-                    margin: [20, 20, 20, 20],
-                    filename: `${sanitizedTitle}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2,
-                        useCORS: true,
-                        letterRendering: true
-                    },
-                    jsPDF: { 
-                        unit: 'mm', 
-                        format: 'a4', 
-                        orientation: 'portrait',
-                        compress: true
-                    }
-                })
-                .from(tempDiv)
-                .save()
-                .then(() => {
-                    document.body.removeChild(tempDiv);
-                    showStatus('File PDF berhasil diunduh!', 'success');
-                })
-                .catch(err => {
-                    console.error('Error generating PDF:', err);
-                    document.body.removeChild(tempDiv);
-                    showStatus('Gagal membuat PDF. Coba unduh sebagai HTML.', 'error');
-                });
+            if (isMobile) {
+                // Untuk perangkat mobile, beri pengguna HTML yang dapat dikonversi ke PDF
+                const pdfReadyHtml = `
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${judulValue}</title>
+                    <style>
+                        @page {
+                            size: A4;
+                            margin: 2cm;
+                        }
+                        body {
+                            font-family: 'Times New Roman', Times, serif;
+                            line-height: 1.6;
+                            margin: 0;
+                            padding: 0;
+                            font-size: 12pt;
+                            color: #000000;
+                        }
+                        .container {
+                            max-width: 21cm;
+                            margin: 2cm auto;
+                            padding: 0 1cm;
+                        }
+                        h1, h2, h3, h4 {
+                            font-weight: bold;
+                            margin-top: 1.5em;
+                            margin-bottom: 0.8em;
+                            page-break-after: avoid;
+                            color: #000000;
+                        }
+                        h1 {
+                            font-size: 16pt;
+                            text-align: center;
+                        }
+                        h2 {
+                            font-size: 14pt;
+                            text-align: left;
+                        }
+                        h3 {
+                            font-size: 12pt;
+                            text-align: left;
+                        }
+                        p {
+                            text-align: justify;
+                            margin-bottom: 0.8em;
+                            orphans: 3;
+                            widows: 3;
+                        }
+                        ul, ol {
+                            margin-top: 0.5em;
+                            margin-bottom: 0.5em;
+                            margin-left: 2em;
+                        }
+                        li {
+                            margin-bottom: 0.3em;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        ${paperContent.innerHTML}
+                    </div>
+                    <div style="text-align:center; margin-top:20px; font-size:10pt; color:#666;">
+                        <p>Catatan: Untuk mengubah file ini menjadi PDF, gunakan fitur "Cetak" di browser dan pilih "Simpan sebagai PDF".</p>
+                    </div>
+                </body>
+                </html>`;
+                
+                const htmlBlob = new Blob([pdfReadyHtml], { type: 'text/html' });
+                const htmlUrl = URL.createObjectURL(htmlBlob);
+                const a = document.createElement('a');
+                a.href = htmlUrl;
+                a.download = `${sanitizedTitle}_for_pdf.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(htmlUrl);
+                
+                showStatus('File HTML untuk PDF berhasil diunduh! Untuk mengubah ke PDF, buka file dengan browser dan gunakan fitur "Cetak ke PDF".', 'success');
+            } else {
+                // Di desktop, gunakan html2pdf.js
+                // Create a temporary container for PDF generation
+                const tempDiv = document.createElement('div');
+                tempDiv.style.width = '210mm'; // A4 width
+                tempDiv.style.margin = '0';
+                tempDiv.style.padding = '20mm';
+                tempDiv.style.visibility = 'hidden';
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.fontFamily = 'Times New Roman, Times, serif';
+                tempDiv.innerHTML = paperContent.innerHTML;
+                document.body.appendChild(tempDiv);
+                
+                // Use html2pdf.js to generate PDF
+                html2pdf()
+                    .set({
+                        margin: [20, 20, 20, 20],
+                        filename: `${sanitizedTitle}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { 
+                            scale: 2,
+                            useCORS: true,
+                            letterRendering: true
+                        },
+                        jsPDF: { 
+                            unit: 'mm', 
+                            format: 'a4', 
+                            orientation: 'portrait',
+                            compress: true
+                        }
+                    })
+                    .from(tempDiv)
+                    .save()
+                    .then(() => {
+                        document.body.removeChild(tempDiv);
+                        showStatus('File PDF berhasil diunduh!', 'success');
+                    })
+                    .catch(err => {
+                        console.error('Error generating PDF:', err);
+                        document.body.removeChild(tempDiv);
+                        showStatus('Gagal membuat PDF. Coba unduh sebagai HTML.', 'error');
+                    });
+            }
         } 
         else if (format === 'docx') {
             showStatus('Membuat file Word...', 'info');
