@@ -544,6 +544,13 @@ CATATAN:
                     <title>${judulValue}</title>
                     <style>
                         body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; }
+                        h1, h2, h3, h4 { font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+                        h1 { font-size: 16pt; text-align: center; }
+                        h2 { font-size: 14pt; text-align: left; }
+                        h3 { font-size: 12pt; text-align: left; }
+                        p { text-align: justify; margin-bottom: 0.8em; }
+                        ul, ol { margin-left: 2em; margin-bottom: 0.8em; }
+                        li { margin-bottom: 0.3em; }
                     </style>
                 </head>
                 <body>
@@ -553,6 +560,9 @@ CATATAN:
                 </body>
                 </html>`;
                 
+                // Deteksi jika berjalan di perangkat mobile
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
                 // Coba konversi dan unduh
                 try {
                     // Pastikan library tersedia
@@ -560,10 +570,28 @@ CATATAN:
                         throw new Error("Library html-to-docx tidak tersedia");
                     }
                     
-                    // Konversi ke DOCX dengan opsi minimal
-                    const converted = window.htmlDocx.asBlob(simpleContent);
-                    saveAs(converted, `${sanitizedTitle}.docx`);
-                    showStatus('File Word berhasil diunduh!', 'success');
+                    if (isMobile) {
+                        // Untuk mobile, gunakan pendekatan alternatif
+                        showStatus('Perangkat mobile terdeteksi. Menggunakan metode alternatif...', 'info');
+                        
+                        // Unduh sebagai HTML saja di perangkat mobile
+                        const htmlBlob = new Blob([simpleContent], { type: 'text/html' });
+                        const htmlUrl = URL.createObjectURL(htmlBlob);
+                        const a = document.createElement('a');
+                        a.href = htmlUrl;
+                        a.download = `${sanitizedTitle}.html`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(htmlUrl);
+                        
+                        showStatus('File HTML berhasil diunduh! Anda dapat membukanya dengan aplikasi Word di perangkat Anda.', 'success');
+                    } else {
+                        // Konversi ke DOCX di desktop
+                        const converted = window.htmlDocx.asBlob(simpleContent);
+                        saveAs(converted, `${sanitizedTitle}.docx`);
+                        showStatus('File Word berhasil diunduh!', 'success');
+                    }
                 } catch (convErr) {
                     console.error('Kesalahan konversi:', convErr);
                     

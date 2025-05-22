@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('Memuat hasil sesi sebelumnya...', 'info');
             loadingIcon.classList.remove('hidden');
             
-            // Use the same API endpoint but with fetchOnly=true parameter
-            const apiUrl = `https://fastrestapis.fasturl.cloud/aillm/gpt-4o-turbo?sessionId=${sessionId}&fetchOnly=true`;
+            // Gemini API with fetchOnly parameter
+            const apiUrl = `https://api.ryzumi.vip/api/ai/gemini?sessionId=${sessionId}&fetchOnly=true`;
             
             const headers = {
                 'Accept': 'application/json'
@@ -189,9 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show loading state
             loadingIcon.classList.remove('hidden');
             generateBtn.disabled = true;
-            showStatus('Generating academic paper...', 'info');
+            showStatus('Generating academic paper with Gemini...', 'info');
 
-            // Build the improved prompt
+            // Build the prompt for Gemini
             let prompt = `Kamu adalah asisten penulisan akademik. Buatkan makalah ilmiah berkualitas tinggi dengan judul "${judulValue || "[Judul Makalah]"}" dengan struktur berikut:
 
 1. HALAMAN JUDUL
@@ -230,7 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
   * Analisis kritis dengan sudut pandang yang beragam
   * Integrasi dengan teori pada BAB II
   * Studi kasus konkret bila relevan
-  * Visualisasi konseptual bila diperlukan (jelaskan dalam bentuk teks)6. BAB III: PENUTUP
+  * Visualisasi konseptual bila diperlukan (jelaskan dalam bentuk teks)
+
+6. BAB III: PENUTUP
 - Kesimpulan: Sintesis temuan utama
 - Rekomendasi: Saran praktis terstruktur
 - Refleksi Akhir: Implikasi jangka panjang
@@ -282,13 +284,8 @@ CATATAN:
             sessionIdInput.value = sessionIdValue;
             localStorage.setItem('makalah_session_id', sessionIdValue);
 
-            // Build the API URL for GPT-4o Turbo
-            let apiUrl = `https://fastrestapis.fasturl.cloud/aillm/gpt-4o-turbo?ask=${encodedPrompt}`;
-            
-            // Add session ID if provided
-            if (sessionIdValue) {
-                apiUrl += `&sessionId=${sessionIdValue}`;
-            }
+            // Build the API URL for Gemini
+            let apiUrl = `https://api.ryzumi.vip/api/ai/gemini?text=${encodedPrompt}&sessionId=${sessionIdValue}`;
             
             const headers = {
                 'Accept': 'application/json'
@@ -314,20 +311,15 @@ CATATAN:
             if (data.result) {
                 paperContent.innerHTML = formatText(data.result);
                 resultContainer.classList.remove('hidden');
-                
-                // Save session ID for continued conversation
-                if (data.sessionId) {
-                    sessionIdInput.value = data.sessionId;
-                }
             } else {
                 showStatus('No content generated. Please try again.', 'error');
             }
 
             // Cache the result
-            const cacheKey = judulValue + (sessionIdValue || '');
+            const cacheKey = judulValue;
             cache.set(cacheKey, data);
             
-            showStatus('Paper generated successfully!', 'success');
+            showStatus('Paper generated successfully with Gemini!', 'success');
         } catch (error) {
             console.error('Error:', error);
             showStatus(error.message || 'Failed to generate paper. Please try again.', 'error');

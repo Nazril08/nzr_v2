@@ -169,82 +169,33 @@
             margin-bottom: 1rem;
         }
         
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 200px;
-            height: 34px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #f0f0f0;
-            transition: .4s;
-            border-radius: 34px;
+        .ai-models-container {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 15px;
         }
         
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 90px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 34px;
-            z-index: 1;
+        .ai-model-btn {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
         }
         
-        .toggle-text {
-            color: #666;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 2;
-            transition: .4s;
+        .ai-model-btn:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-1px);
         }
         
-        .toggle-left {
-            margin-left: 5px;
-        }
-        
-        .toggle-right {
-            margin-right: 5px;
-        }
-        
-        input:checked + .toggle-slider:before {
-            transform: translateX(102px);
-        }
-        
-        input:checked + .toggle-slider .toggle-left {
-            color: #666;
-        }
-        
-        input:checked + .toggle-slider .toggle-right {
-            color: #4f46e5;
-        }
-        
-        input:not(:checked) + .toggle-slider .toggle-left {
-            color: #4f46e5;
-        }
-        
-        input:not(:checked) + .toggle-slider .toggle-right {
-            color: #666;
+        .ai-model-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
     </style>
 </head>
@@ -256,13 +207,11 @@
             
             <!-- AI Model Toggle Switch -->
             <div class="toggle-container mt-4">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="aiModelToggle">
-                    <div class="toggle-slider">
-                        <span class="toggle-text toggle-left">GPT-4o Turbo</span>
-                        <span class="toggle-text toggle-right">DeepSeek</span>
-                    </div>
-                </label>
+                <div class="ai-models-container">
+                    <button id="aiModelBtn1" class="ai-model-btn active">GPT-4o Turbo</button>
+                    <button id="aiModelBtn2" class="ai-model-btn">DeepSeek</button>
+                    <button id="aiModelBtn3" class="ai-model-btn">Gemini</button>
+                </div>
             </div>
         </div>
     </header>
@@ -481,6 +430,13 @@
                                     <strong>Catatan Penting:</strong> Untuk hasil terbaik saat mencetak, gunakan format PDF. Jika ingin melakukan penyuntingan lebih lanjut, gunakan format Word (.docx).
                                 </p>
                             </div>
+
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                                <p class="text-xs text-blue-800">
+                                    <i class="fas fa-mobile-alt mr-1"></i> 
+                                    <strong>Pengguna Perangkat Mobile:</strong> Untuk unduhan Word di perangkat mobile, sistem akan mengunduh file HTML yang dapat Anda buka dengan aplikasi Microsoft Word di perangkat Anda. Gunakan opsi "Buka dengan..." dan pilih aplikasi Word setelah mengunduh.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -572,7 +528,9 @@
             const generateBtn = document.getElementById('generateBtn');
             const downloadMenuBtn = document.getElementById('downloadMenuBtn');
             const downloadMenu = document.getElementById('downloadMenu');
-            const aiModelToggle = document.getElementById('aiModelToggle');
+            const aiModelBtn1 = document.getElementById('aiModelBtn1');
+            const aiModelBtn2 = document.getElementById('aiModelBtn2');
+            const aiModelBtn3 = document.getElementById('aiModelBtn3');
             const aiScript = document.getElementById('aiScript');
             const sessionIdInput = document.getElementById('sessionIdInput');
             const newSessionBtn = document.getElementById('newSessionBtn');
@@ -636,17 +594,16 @@
                 });
             }
             
-            // AI Model Toggle Switch Handler
-            aiModelToggle.addEventListener('change', function() {
-                if (this.checked) {
-                    // Switch to DeepSeek
-                    aiScript.src = "../../backend/ai/makala_deepseek.js";
-                    console.log("Switched to DeepSeek AI");
-                } else {
-                    // Switch to GPT-4o Turbo
-                    aiScript.src = "../../backend/ai/makala.js";
-                    console.log("Switched to GPT-4o Turbo AI");
-                }
+            // Set GPT-4o Turbo as default active
+            aiModelBtn1.classList.add('active');
+            
+            // AI Model Button Handlers
+            aiModelBtn1.addEventListener('click', function() {
+                aiModelBtn1.classList.add('active');
+                aiModelBtn2.classList.remove('active');
+                aiModelBtn3.classList.remove('active');
+                aiScript.src = "../../backend/ai/makala.js";
+                console.log("Switched to GPT-4o Turbo AI");
                 
                 // Reset the result container
                 if (!resultContainer.classList.contains('hidden')) {
@@ -657,9 +614,57 @@
                 // Display notification about AI model change
                 const status = document.getElementById('status');
                 if (status) {
-                    status.textContent = this.checked ? 
-                        "Model AI diubah ke DeepSeek. Siap untuk menghasilkan makalah." : 
-                        "Model AI diubah ke GPT-4o Turbo. Siap untuk menghasilkan makalah.";
+                    status.textContent = "Model AI diubah ke GPT-4o Turbo. Siap untuk menghasilkan makalah.";
+                    status.className = 'mt-2 text-sm font-medium text-blue-600';
+                    
+                    setTimeout(() => {
+                        status.textContent = '';
+                    }, 3000);
+                }
+            });
+            
+            aiModelBtn2.addEventListener('click', function() {
+                aiModelBtn2.classList.add('active');
+                aiModelBtn1.classList.remove('active');
+                aiModelBtn3.classList.remove('active');
+                aiScript.src = "../../backend/ai/makala_deepseek.js";
+                console.log("Switched to DeepSeek AI");
+                
+                // Reset the result container
+                if (!resultContainer.classList.contains('hidden')) {
+                    resultContainer.classList.add('hidden');
+                    instructionsContainer.classList.remove('hidden');
+                }
+                
+                // Display notification about AI model change
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = "Model AI diubah ke DeepSeek. Siap untuk menghasilkan makalah.";
+                    status.className = 'mt-2 text-sm font-medium text-blue-600';
+                    
+                    setTimeout(() => {
+                        status.textContent = '';
+                    }, 3000);
+                }
+            });
+            
+            aiModelBtn3.addEventListener('click', function() {
+                aiModelBtn3.classList.add('active');
+                aiModelBtn1.classList.remove('active');
+                aiModelBtn2.classList.remove('active');
+                aiScript.src = "../../backend/ai/makala_gemini.js";
+                console.log("Switched to Gemini AI");
+                
+                // Reset the result container
+                if (!resultContainer.classList.contains('hidden')) {
+                    resultContainer.classList.add('hidden');
+                    instructionsContainer.classList.remove('hidden');
+                }
+                
+                // Display notification about AI model change
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = "Model AI diubah ke Gemini. Siap untuk menghasilkan makalah.";
                     status.className = 'mt-2 text-sm font-medium text-blue-600';
                     
                     setTimeout(() => {
