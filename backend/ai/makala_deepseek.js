@@ -193,7 +193,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Build the prompt for DeepSeek
             // IMPORTANT: Replace this with the prompt from your photo
-            let prompt = `Kamu adalah asisten penulisan akademik. Buatkan makalah ilmiah berkualitas tinggi dengan judul "${judulValue || "[Judul Makalah]"}" dengan struktur berikut:
+            let prompt = `Kamu adalah asisten penulisan akademik. Buatkan makalah ilmiah LENGKAP dengan konten substantif (BUKAN template atau kerangka dengan placeholder) untuk judul "${judulValue || "[Judul Makalah]"}".
+
+SANGAT PENTING: Hasilkan makalah lengkap dengan konten asli yang informatif dan bermakna, bukan hanya template dengan placeholder dalam kurung siku. Semua bagian harus berisi konten yang relevan dan meyakinkan seolah-olah ditulis oleh seorang akademisi, bukan hanya kerangka.
+
+PERBAIKAN FORMAT UG:
+1. Jangan gunakan penomoran markdown (# atau ##) untuk heading. Gunakan judul kapital atau tebal tanpa nomor.
+2. Setiap tabel harus memiliki judul di atas (contoh: "Tabel 1. Judul Tabel"), konten rata tengah, dan sumber di bawah.
+3. Format dokumen harus ketat mengikuti: Times New Roman 12pt, spasi 1.5, margin 2.54cm di semua sisi.
+4. Gunakan bahasa ilmiah formal dengan struktur kalimat padat, hindari narasi ringan atau gaya storytelling.
+5. Makalah harus memiliki panjang 12-16 halaman, dengan minimal 10 referensi (lebih baik 15-20) format APA.
+6. Bagian Metode Penelitian harus mengikuti format UG dengan 6 sub-subjudul spesifik: Jenis Penelitian, Populasi, Teknik Sampling, Teknik Pengumpulan Data, Validitas & Reliabilitas, dan Teknik Analisis Data + Etika Penelitian.
+
+Struktur makalah:
 
 1. HALAMAN JUDUL
 - Judul: ${judulValue || "[Judul Makalah]"}
@@ -205,54 +217,61 @@ document.addEventListener('DOMContentLoaded', () => {
 - Tahun: ${tahunValue || new Date().getFullYear()}
 - Mata Kuliah: ${mataKuliahValue || "[Mata Kuliah]"}
 
-2. KATA PENGANTAR
-- Berisi pengantar formal, tujuan, konteks, dan ucapan terima kasih
-- Akhiri dengan tanda tangan penulis, kota dan tanggal
+2. ABSTRAK
+- Satu paragraf (maksimum 200 kata) berisi tujuan, metode, hasil, dan kesimpulan penelitian
+- 5 kata kunci yang relevan dengan penelitian
+- Font: Times New Roman, 12 pt, justified
 
-3. DAFTAR ISI
-- Format hierarkis: BAB (angka romawi), Sub-bab (huruf kapital), Sub-sub-bab (angka arab)
+3. PENDAHULUAN
+- Latar Belakang: Konteks penelitian, urgensi masalah, gambaran umum fenomena
+- Identifikasi Masalah: Penjabaran spesifik masalah yang ingin dipecahkan
+- Tujuan Penelitian: Tujuan umum dan khusus secara terukur
+- Pertanyaan Penelitian: 2-3 pertanyaan yang menjadi dasar penelitian
+- Manfaat Penelitian: Kontribusi teoretis dan praktis
+- Batasan Penelitian: Ruang lingkup yang jelas tentang cakupan penelitian
 
-4. BAB I: PENDAHULUAN
-- Latar Belakang: Konteks, data, dan pentingnya topik
-- Rumusan Masalah: 3 pertanyaan penelitian spesifik
-- Tujuan Penelitian: Tujuan umum dan khusus
-- Manfaat Penelitian: Teoretis dan praktis
+4. LANDASAN TEORI
+- Penjelasan konsep dan teori yang relevan dengan topik
+- Referensi dari sumber tepercaya (jurnal, buku, publikasi resmi)
+- Kajian tentang variabel penelitian
+- Hubungan antar variabel dan kerangka pemikiran
 
-5. BAB II: PEMBAHASAN
-- Cukup gunakan 3 hingga 4 sub-bab utama saja, namun pastikan setiap sub-bab memiliki pembahasan yang panjang, mendalam, dan kritis
-- Fokuskan pada:
-  * Analisis berdasarkan teori yang telah dibahas di BAB II
-  * Bukti empiris yang relevan (studi kasus, data statistik, tren)
-  * Argumentasi logis dengan integrasi teori dan contoh nyata
-  * Implikasi praktis dan teoretis dari pembahasan
-- Setiap sub-bab harus memiliki:
-  * Premis utama yang jelas
-  * Bukti empiris dari penelitian terkini (data statistik, tren, pola)
-  * Analisis kritis dengan sudut pandang yang beragam
-  * Integrasi dengan teori pada BAB II
-  * Studi kasus konkret bila relevan
-  * Visualisasi konseptual bila diperlukan (jelaskan dalam bentuk teks)
+5. METODE PENELITIAN (Dengan sub-subjudul berikut)
+- Jenis Penelitian: Kualitatif/kuantitatif/campuran dengan justifikasi detail
+- Populasi dan Sampel: Deskripsi populasi, ukuran sampel, dan kriteria inklusi/eksklusi
+- Teknik Sampling: Metode spesifik (purposive, random, stratified, dll) dengan alasan pemilihan
+- Teknik Pengumpulan Data: Instrumen spesifik (kuesioner tervalidasi, protokol wawancara, perangkat observasi)
+- Validitas dan Reliabilitas: Metode pengujian validitas data (triangulasi, member checking, dll)
+- Teknik Analisis Data: Langkah-langkah analisis dan software yang digunakan (bila ada)
+- Etika Penelitian: Pertimbangan etis (jika melibatkan manusia/data sensitif)
 
-6. BAB III: PENUTUP
-- Kesimpulan: Sintesis temuan utama
-- Rekomendasi: Saran praktis terstruktur
-- Refleksi Akhir: Implikasi jangka panjang
+6. HASIL DAN PEMBAHASAN
+- Penyajian data dalam bentuk tabel/grafik dengan format lengkap (judul di atas, konten rata tengah, sumber di bawah)
+- Analisis data sesuai metode yang digunakan
+- Interpretasi hasil (minimal 60% dari bagian ini)
+- Pengaitan dengan teori pada bagian landasan teori
+- Implikasi teoretis dan praktis dari temuan
 
-7. DAFTAR PUSTAKA
-- Sertakan 4-5 referensi berkualitas saja sesuai format APA Style
-- PENTING: Buat referensi nyata dan lengkap, bukan sekadar placeholder [Referensi X]
-- Untuk jurnal: Nama Penulis. (Tahun). Judul artikel. Nama Jurnal, Volume(Issue), Halaman. DOI/URL
-- Untuk buku: Nama Penulis. (Tahun). Judul Buku. Penerbit.
-- Untuk website: Nama Penulis/Organisasi. (Tahun). Judul Halaman. Nama Website. URL
-- Gunakan kombinasi jurnal akademik, buku, dan sumber tepercaya lainnya
-- Pastikan semua referensi yang dikutip dalam teks muncul di daftar pustaka dan formatnya konsisten
+7. KESIMPULAN DAN SARAN
+- Kesimpulan: Ringkasan temuan utama yang menjawab pertanyaan penelitian
+- Saran: Rekomendasi berdasarkan hasil penelitian
 
-PANDUAN PENULISAN:
-- Bahasa Indonesia baku dan ilmiah dengan kosakata akademis
-- Paragraf substantif dengan struktur yang jelas dan koheren
-- Argumentasi logis dengan dukungan data dan referensi
-- Analisis kritis dan evaluatif, bukan sekadar deskriptif
-- Hindari penggunaan kata ganti orang pertama
+8. DAFTAR PUSTAKA
+- Format APA edisi ke-7 dengan minimal 10 referensi (idealnya 15-20)
+- Minimal 70% dari jurnal ilmiah terakreditasi
+- Pastikan semua referensi yang dikutip tercantum dalam daftar
+- Contoh format:
+  * Jurnal: Penulis. (Tahun). Judul artikel. Nama Jurnal, Volume(Issue), halaman. DOI/URL
+  * Buku: Penulis. (Tahun). Judul Buku. Penerbit.
+  * Website: Penulis/Organisasi. (Tahun). Judul Halaman. URL
+
+KETENTUAN UMUM:
+- Ditulis dalam Bahasa Indonesia baku dan formal sesuai PUEBI
+- Struktur kalimat padat dan formal dengan terminologi akademik yang tepat
+- Kutipan asing diterjemahkan ke Bahasa Indonesia
+- Format A4, spasi 1.5, margin 2.54 cm di semua sisi
+- Times New Roman 12pt
+- Panjang makalah 12-16 halaman
 
 CATATAN TAMBAHAN:
 1. Halaman judul harus ditulis dalam format resmi akademik, tanpa bullet point. Semua elemen ditata secara rata tengah (centered) pada halaman, dengan urutan sebagai berikut:
@@ -264,11 +283,19 @@ CATATAN TAMBAHAN:
    - Universitas
    - Tahun
    - Mata Kuliah
-   Format halaman judul harus menyerupai gaya sampul makalah resmi perguruan tinggi.
 
-CATATAN:
-- Halaman judul format resmi akademik, rata tengah
-- Panjang makalah 20-25 halaman`;
+2. Setiap tabel harus memiliki: 
+   - Judul di bagian atas (contoh: "Tabel 1. Judul Tabel")
+   - Konten dengan format rapi dan rata tengah
+   - Sumber yang jelas di bagian bawah tabel
+   - Konsistensi format di seluruh dokumen
+
+3. Untuk gambar/diagram:
+   - Judul di bagian bawah (contoh: "Gambar 1. Nama Gambar")
+   - Resolusi yang jelas dan terbaca
+   - Sumber referensi yang jelas
+
+INGAT: Jangan gunakan placeholder [seperti ini]. Tuliskan KONTEN LENGKAP untuk setiap bagian. Gunakan bahasa ilmiah formal, hindari narasi ringan atau gaya storytelling. Format visual seperti tabel dan gambar harus lengkap dengan judul dan sumber.`;
 
             // Add referensi if provided
             if (referensiValue) {
