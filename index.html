@@ -3,498 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi Tools - Your Creative Toolkit</title>
+    <title>nzr Tools - Creative Digital Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Base styles */
-        .card {
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        /* Category Pills */
-        .category-pill {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            background-color: #f3f4f6;
-            color: #4b5563;
-            border: none;
-            cursor: pointer;
-            margin: 0 4px;
-        }
-        
-        .category-pill:hover {
-            background-color: #e5e7eb;
-        }
-        
-        .category-pill.active {
-            background-color: #6d28d9;
-            color: white;
-        }
-        
-        .category-item {
-            transition: all 0.2s ease;
-        }
-        .category-item:hover {
-            background-color: #f3f4f6;
-        }
-        .category-item.active {
-            background-color: #000;
-            color: white;
-        }
-        .integration-card {
-            transition: all 0.3s ease;
-            display: block;
-        }
-        .integration-card.hidden {
-            display: none;
-        }
-
-        .logo {
-            padding: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #111827;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid #e5e7eb;
-            background: white;
-        }
-
-        .categories-section {
-            padding: 1.5rem;
-        }
-
-        .categories-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 1rem;
-        }
-
-        .category-item {
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-
-        .category-item:hover {
-            background-color: #f3f4f6;
-            color: #2563eb;
-        }
-
-        .category-item.active {
-            background-color: #2563eb;
-            color: white;
-        }
-
-        /* Hero Banner Styles */
-        .hero-banner {
-            position: relative;
-            overflow: hidden;
-            height: 500px;
-            margin-bottom: 2rem;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .hero-banner-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 1;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
-        }
-        
-        .hero-avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            border: 5px solid rgba(255, 255, 255, 0.8);
-            object-fit: cover;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-            margin-bottom: 2rem;
-        }
-        
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-        }
-        
-        .hero-subtitle {
-            font-size: 2rem;
-            font-weight: 400;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        /* Mobile styles */
-        @media (max-width: 768px) {
-            .hero-banner {
-                height: 400px;
-            }
-            
-            .hero-avatar {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.5rem;
-            }
-            
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: -100%;
-                width: 80%;
-                max-width: 300px;
-                height: 100vh;
-                background: white;
-                transition: transform 0.3s ease-in-out;
-                transform: translateX(-100%);
-                z-index: 1000;
-                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .logo {
-                position: relative;
-                display: block;
-                text-align: center;
-                border-bottom: 1px solid #e5e7eb;
-            }
-            .sidebar.open {
-                transform: translateX(0);
-                left: 0;
-            }
-            .overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 999;
-                opacity: 0;
-                transition: opacity 0.3s ease-in-out;
-            }
-            .overlay.active {
-                display: block;
-                opacity: 1;
-            }
-            .main-content {
-                margin-left: 0 !important;
-                padding-top: 4rem;
-            }
-            .search-box {
-                width: 100% !important;
-                max-width: 200px;
-            }
-            .pagination-controls {
-                padding: 0.5rem;
-            }
-            .pagination-controls button {
-                padding: 0.5rem !important;
-                font-size: 0.875rem !important;
-            }
-        }
-
-        /* Tablet styles */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
-
-        /* Desktop styles */
-        @media (min-width: 769px) {
-            .logo {
-                position: relative;
-                border-bottom: 1px solid #e5e7eb;
-            }
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 256px;
-                height: 100vh;
-                overflow-y: auto;
-                background: white;
-                border-right: 1px solid #e5e7eb;
-            }
-            .main-content {
-                margin-left: 256px;
-            }
-            .mobile-menu-btn {
-                display: none;
-            }
-        }
-
-        /* Fixed elements */
-        .fixed-pagination {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 1rem;
-            z-index: 900;
-        }
-        @media (min-width: 769px) {
-            .fixed-pagination {
-                left: 256px;
-            }
-        }
-    </style>
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Hero Banner Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <div class="hero-banner">
-            <img src="assets/img/Hi.png" alt="Japanese garden with cherry blossoms" class="hero-banner-bg">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-jakarta">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">
+                        nzr<span class="font-light">Tools</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#" class="nav-link px-3 py-2 text-gray-700 font-medium">Home</a>
+                    <a href="#tools" class="nav-link px-3 py-2 text-gray-700 font-medium">Tools</a>
+                    <a href="#" class="nav-link px-3 py-2 text-gray-700 font-medium">About</a>
+                </div>
+                <!-- Mobile menu button replaced with simple links -->
+                <div class="flex md:hidden items-center gap-3">
+                    <a href="#" class="text-sm font-medium text-gray-700">Home</a>
+                    <a href="#tools" class="text-sm font-medium text-gray-700">Tools</a>
+                </div>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Header Section -->
-    <div class="w-full bg-white py-10 px-4 shadow-sm mb-6">
-        <div class="max-w-3xl mx-auto text-center">
-            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Welcome to nzr Tools</h1>
-            <p class="text-lg text-gray-500 mb-6">Your all-in-one creative toolkit for AI tools, image processing, and content creation.</p>
+    <!-- Hero Section -->
+    <section class="pt-24 pb-12 md:pt-32 md:pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="hero-section backdrop-blur-md bg-white/30 glass-card rounded-3xl overflow-hidden relative">
+                <div class="absolute inset-0 -z-10 overflow-hidden">
+                    <img src="assets/img/Hi.png" alt="Japanese garden" class="w-full h-full object-cover object-center">
+                </div>
+                <div class="relative z-10 bg-gradient-to-b from-transparent via-black/40 to-black/70 p-8 md:p-12 lg:p-16 min-h-[500px] flex flex-col justify-end">
+                    <div class="max-w-3xl">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                            Discover <span class="text-purple-300">Powerful</span> Tools for Your Creativity
+                        </h1>
+                        <p class="text-lg md:text-xl text-gray-200 mb-8">
+                            Your all-in-one creative toolkit for AI tools, image processing, and content creation
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="#tools" class="btn-primary">
+                                Explore Tools
+                            </a>
+                            <a href="#" class="btn-secondary">
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Filter Section -->
+    <section id="tools" class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Our <span class="text-indigo-600">Creative</span> Toolkit
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Discover our collection of powerful AI tools and utilities designed to enhance your creative workflow
+                </p>
+            </div>
+
             <!-- Category Pills -->
-            <div class="flex flex-wrap justify-center gap-3 mb-6" id="categoryPills">
-                <button class="category-pill active" data-category="all">All Tools</button>
-                <button class="category-pill" data-category="AI">AI Tools</button>
-                <button class="category-pill" data-category="image">Image Tools</button>
-                <button class="category-pill" data-category="tools">Utilities</button>
-                <button class="category-pill" data-category="downloader">Social Media</button>
+            <div class="mb-8">
+                <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-6" id="categoryPills">
+                    <button class="category-pill active" data-category="all">All Tools</button>
+                    <button class="category-pill" data-category="AI">AI Tools</button>
+                    <button class="category-pill" data-category="image">Image Tools</button>
+                    <button class="category-pill" data-category="tools">Utilities</button>
+                    <button class="category-pill" data-category="downloader">Social Media</button>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex justify-center">
+                    <div class="relative w-full max-w-xl">
+                        <input type="text" id="searchBox" placeholder="Search for tools..." 
+                            class="w-full px-5 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base shadow-sm pl-12" 
+                            onkeyup="searchTools()">
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Search Bar -->
-            <div class="flex justify-center">
-                <input type="text" id="searchBox" placeholder="🔍 Search tools..." class="w-full max-w-lg px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base shadow-sm" onkeyup="searchTools()">
-            </div>
-        </div>
-    </div>
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="toolsGrid">
-            <!-- AI Category -->
-            <!-- Other AI cards -->
-            <a href="frontend/utilities/bratgenerator.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="text image generator custom text image creator font customization blur effect styled text typography custom typography" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Text Image Generator</h3>
-                <p class="text-gray-600">Create customized text images with different fonts, colors, positions and visual effects.</p>
-            </a>
-            
-            <a href="frontend/utilities/quotemaker.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="quote image generator quote maker social media shareable inspirational quotes profile picture text to image" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Quote Image Generator</h3>
-                <p class="text-gray-600">Create beautiful shareable quote images with custom text, profile pictures, and signatures.</p>
-            </a>
-            
-            <a href="frontend/utilities/calendarmaker.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="calendar maker generator monthly planner custom calendar scheduler printable holidays event planner" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Custom Calendar Maker</h3>
-                <p class="text-gray-600">Create customizable monthly calendars with different styles, color schemes, and holiday options.</p>
-            </a>
-            <a href="frontend/utilities/texttopdf.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="text to pdf converter document generator pdf creator text conversion document formatting" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Text to PDF Converter</h3>
-                <p class="text-gray-600">Convert text to professional PDF documents with custom formatting, headers, and watermarks.</p>
-            </a>
-            <a href="frontend/utilities/welcomegenerator.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="welcome image generator welcome banner discord server greeting welcome screen community banner welcome card custom greeting custom welcome upload images">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Welcome Image Generator</h3>
-                <p class="text-gray-600">Create customized welcome banners for servers or communities with personalized avatar, background and messages. Upload your own images or use URLs.</p>
-            </a>
-            <a href="frontend/ai/gpt4o.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="gpt-4o turbo assistant ai advanced chatbot smart conversation artificial intelligence chat helper gpt4 multilingual translator writer" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">GPT-4o Turbo Assistant</h3>
-                <p class="text-gray-600">Advanced AI assistant with conversation capabilities across topics, creative writing, problem-solving, and image analysis.</p>
-            </a>
-            <a href="frontend/ai/upscale.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="ai image upscaler artificial intelligence image enhancement super resolution upscale enlarge resize high quality" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">AI Image Upscaler</h3>
-                <p class="text-gray-600">Enhance and upscale your images with AI technology up to 8x resolution while maintaining quality.</p>
-            </a>
-            <a href="frontend/ai/logogenerator.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="ai logo generator brand logos design creator minimalist modern business branding identity graphic design" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">AI Logo Generator</h3>
-                <p class="text-gray-600">Create professional and unique logos for your brand based on industry, style, and your custom description.</p>
-            </a>
-            <a href="frontend/ai/imgextender.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="ai image extender image expansion extend background content aware fill automatic extension resize expand enlarge photo editing" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V6a2 2 0 012-2h12a2 2 0 012 2v2M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M6 12h12"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">AI Image Extender</h3>
-                <p class="text-gray-600">Extend your images by adding AI-generated content to any side. Perfect for creating backgrounds or adjusting image dimensions.</p>
-            </a>
-            <a href="frontend/ai/generativeimage.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="ai text to image generator create images from text prompts generative ai text to picture prompt art creator text2img" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">AI Image Generator</h3>
-                <p class="text-gray-600">Create stunning images from text descriptions with customizable styles and aspect ratios. Turn your ideas into visual art.</p>
-            </a>
-            <a href="frontend/ai/textnote.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="text to note handwritten notes generator handwriting converter student notes digital to analog ai note maker" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Text to Handwritten Note</h3>
-                <p class="text-gray-600">Convert digital text into realistic handwritten notes with customizable styles and formatting.</p>
-            </a>
-            
-            <a href="frontend/ai/makala.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="academic paper generator makalah essay writer research paper thesis generator paper maker sarjana student college university graduate paper s1" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Pembuat Makalah Akademik</h3>
-                <p class="text-gray-600">Generate academic papers with proper structure and formatting. Perfect for students, researchers, and academic writing.</p>
-            </a>
-            
-            <a href="frontend/ai/appmaker.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="web app maker website to app converter progressive web app pwa mobile app creator app generator app builder android ios website wrapper" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Web App Maker</h3>
-                <p class="text-gray-600">Convert any website into a mobile app with customizable toolbar, splash screen, and app icon.</p>
-            </a>
-            <a href="frontend/utilities/webextractor.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="web extractor website converter pdf extractor webpage to pdf html converter page screenshot capture web to pdf web to image web archive" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Web Extractor</h3>
-                <p class="text-gray-600">Extract website content as PDF, image, or HTML. Perfect for saving articles, capturing screenshots, or archiving web pages.</p>
-            </a>
-            
-            <!-- Fake Phone Number Generator Card -->
-            <a href="frontend/utilities/fakenumber.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="fake phone number generator telephone numbers sample test data placeholder mock numbers global international country format phone testing" data-category="tools">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Fake Phone Number Generator</h3>
-                <p class="text-gray-600">Generate realistic phone numbers from 40+ countries with proper formatting. Perfect for UI mockups, testing, and sample data.</p>
-            </a>
-            
-            <!-- TurboSeek AI Card -->
-            <a href="frontend/utilities/turboseek.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="turboseek ai knowledge search engine question answering information retrieval sources search smart search ai search semantic search research tool" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">TurboSeek AI</h3>
-                <p class="text-gray-600">Powerful AI-powered knowledge search engine. Ask questions and get answers with sources from across the web.</p>
-            </a>
-            
-            <!-- Animagine Image Generator Card -->
-            <a href="frontend/ai/animagine.html" class="integration-card bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" data-name="animagine anime image generator ai anime art anime character creator waifu generator anime style illustration manga creator anime portrait" data-category="AI">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Animagine Image Generator</h3>
-                <p class="text-gray-600">Create high-quality anime-style images with detailed prompts. Generate characters, scenes, and illustrations in anime aesthetic.</p>
-            </a>
-        </div>
-    </div>
 
+            <!-- Tools Grid - Bento Layout -->
+            <div class="bento-grid" id="toolsGrid">
+                <!-- AI Tools -->
+                <a href="frontend/ai/gpt4o.html" class="tool-card featured-card" data-name="gpt-4o turbo assistant ai advanced chatbot smart conversation artificial intelligence chat helper gpt4 multilingual translator writer" data-category="AI">
+                    <div class="card-icon ai-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>GPT-4o Turbo Assistant</h3>
+                        <p>Advanced AI assistant with conversation capabilities across topics, creative writing, problem-solving, and image analysis.</p>
+                        <div class="card-tag">AI</div>
+                    </div>
+                </a>
+
+                <a href="frontend/utilities/quotemaker.html" class="tool-card" data-name="quote image generator quote maker social media shareable inspirational quotes profile picture text to image" data-category="tools">
+                    <div class="card-icon util-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Quote Image Generator</h3>
+                        <p>Create beautiful shareable quote images with custom text, profile pictures, and signatures.</p>
+                        <div class="card-tag">Utility</div>
+                    </div>
+                </a>
+
+                <a href="frontend/ai/generativeimage.html" class="tool-card" data-name="ai text to image generator create images from text prompts generative ai text to picture prompt art creator text2img" data-category="AI">
+                    <div class="card-icon ai-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>AI Image Generator</h3>
+                        <p>Create stunning images from text descriptions with customizable styles and aspect ratios.</p>
+                        <div class="card-tag">AI</div>
+                    </div>
+                </a>
+
+                <a href="frontend/ai/upscale.html" class="tool-card" data-name="ai image upscaler artificial intelligence image enhancement super resolution upscale enlarge resize high quality" data-category="AI">
+                    <div class="card-icon ai-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>AI Image Upscaler</h3>
+                        <p>Enhance and upscale your images with AI technology up to 8x resolution while maintaining quality.</p>
+                        <div class="card-tag">AI</div>
+                    </div>
+                </a>
+
+                <a href="frontend/utilities/calendarmaker.html" class="tool-card" data-name="calendar maker generator monthly planner custom calendar scheduler printable holidays event planner" data-category="tools">
+                    <div class="card-icon util-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Custom Calendar Maker</h3>
+                        <p>Create customizable monthly calendars with different styles, color schemes, and holiday options.</p>
+                        <div class="card-tag">Utility</div>
+                    </div>
+                </a>
+
+                <a href="frontend/ai/logogenerator.html" class="tool-card featured-card" data-name="ai logo generator brand logos design creator minimalist modern business branding identity graphic design" data-category="AI">
+                    <div class="card-icon ai-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>AI Logo Generator</h3>
+                        <p>Create professional and unique logos for your brand based on industry, style, and your custom description.</p>
+                        <div class="card-tag">AI</div>
+                    </div>
+                </a>
+
+                <a href="frontend/ai/imgextender.html" class="tool-card" data-name="ai image extender image expansion extend background content aware fill automatic extension resize expand enlarge photo editing" data-category="AI">
+                    <div class="card-icon ai-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V6a2 2 0 012-2h12a2 2 0 012 2v2M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M6 12h12"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>AI Image Extender</h3>
+                        <p>Extend your images by adding AI-generated content to any side. Perfect for creating backgrounds.</p>
+                        <div class="card-tag">AI</div>
+                    </div>
+                </a>
+
+                <a href="frontend/utilities/bratgenerator.html" class="tool-card" data-name="text image generator custom text image creator font customization blur effect styled text typography custom typography" data-category="tools">
+                    <div class="card-icon util-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Text Image Generator</h3>
+                        <p>Create customized text images with different fonts, colors, positions and visual effects.</p>
+                        <div class="card-tag">Utility</div>
+                    </div>
+                </a>
+
+                <a href="frontend/ai/animagine.html" class="tool-card" data-name="animagine anime image generator ai anime art anime character creator waifu generator anime style illustration manga creator anime portrait" data-category="AI">
+                    <div class="card-icon ai-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Animagine Image Generator</h3>
+                        <p>Create high-quality anime-style images with detailed prompts.</p>
+                        <div class="card-tag">AI</div>
+                    </div>
+                </a>
+                
+                <!-- Add more tools here. For brevity, we're showing a subset of your tools -->
+                
+                <!-- This is a placeholder for all other tools which will be dynamically populated -->
+                <div id="otherToolsPlaceholder"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Why Choose <span class="text-indigo-600">nzrTools</span>
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Our platform offers a wide range of features designed to enhance your creative workflow
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3>Fast & Efficient</h3>
+                    <p>All our tools are optimized for speed and efficiency, helping you complete your tasks quickly</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>Your data security is our priority. We ensure your information remains private and protected</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                    </div>
+                    <h3>Customizable</h3>
+                    <p>Each tool offers extensive customization options to fit your specific requirements</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="text-2xl font-bold mb-4">
+                        nzr<span class="font-light">Tools</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Your all-in-one creative toolkit for AI tools, image processing, and content creation.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#tools" class="text-gray-400 hover:text-white transition-colors">Tools</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script to initialize remaining tools -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Array of all tools
+            const allTools = [
+                {
+                    name: "Text to PDF Converter",
+                    description: "Convert text to professional PDF documents with custom formatting, headers, and watermarks.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>',
+                    url: "frontend/utilities/texttopdf.html",
+                    category: "tools"
+                },
+                {
+                    name: "Welcome Image Generator",
+                    description: "Create customized welcome banners for servers or communities with personalized avatar, background and messages.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>',
+                    url: "frontend/utilities/welcomegenerator.html",
+                    category: "tools"
+                },
+                {
+                    name: "Web Extractor",
+                    description: "Extract website content as PDF, image, or HTML. Perfect for saving articles or archiving web pages.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>',
+                    url: "frontend/utilities/webextractor.html",
+                    category: "tools"
+                },
+                {
+                    name: "Fake Phone Number Generator",
+                    description: "Generate realistic phone numbers from 40+ countries with proper formatting. Perfect for UI mockups and testing.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>',
+                    url: "frontend/utilities/fakenumber.html",
+                    category: "tools"
+                },
+                {
+                    name: "TurboSeek AI",
+                    description: "Powerful AI-powered knowledge search engine. Ask questions and get answers with sources from across the web.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>',
+                    url: "frontend/utilities/turboseek.html",
+                    category: "AI"
+                },
+                {
+                    name: "Text to Handwritten Note",
+                    description: "Convert digital text into realistic handwritten notes with customizable styles and formatting.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>',
+                    url: "frontend/ai/textnote.html",
+                    category: "tools"
+                },
+                {
+                    name: "Pembuat Makalah Akademik",
+                    description: "Generate academic papers with proper structure and formatting. Perfect for students and researchers.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>',
+                    url: "frontend/ai/makala.html",
+                    category: "AI"
+                },
+                {
+                    name: "Web App Maker",
+                    description: "Convert any website into a mobile app with customizable toolbar, splash screen, and app icon.",
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>',
+                    url: "frontend/ai/appmaker.html",
+                    category: "AI"
+                }
+            ];
+
+            // Populate the remaining tools
+            const placeholder = document.getElementById('otherToolsPlaceholder');
+            if (placeholder) {
+                let html = '';
+                allTools.forEach(tool => {
+                    const iconClass = tool.category.toLowerCase() === 'ai' ? 'ai-icon' : 'util-icon';
+                    const categoryLabel = tool.category.toLowerCase() === 'ai' ? 'AI' : 'Utility';
+                    
+                    html += `
+                    <a href="${tool.url}" class="tool-card" data-name="${tool.name.toLowerCase()} ${tool.description.toLowerCase()}" data-category="${tool.category}">
+                        <div class="card-icon ${iconClass}">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${tool.icon}
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>${tool.name}</h3>
+                            <p>${tool.description}</p>
+                            <div class="card-tag">${categoryLabel}</div>
+                        </div>
+                    </a>`;
+                });
+                placeholder.insertAdjacentHTML('beforebegin', html);
+                placeholder.remove();
+            }
+
+            // Initialize filtering and search functionalities
+            initializeToolFiltering();
+        });
+
+        // Category filtering and search functionality
         let filteredCards = [];
         let currentCategory = 'all';
 
-        document.querySelectorAll('.category-pill').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentCategory = this.getAttribute('data-category').toLowerCase();
-                filterByCategory(currentCategory);
+        function initializeToolFiltering() {
+            document.querySelectorAll('.category-pill').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.getAttribute('data-category').toLowerCase();
+                    filterByCategory(currentCategory);
+                });
             });
-        });
+
+            // Initialize with all tools
+            filterByCategory('all');
+        }
 
         function filterByCategory(category) {
             currentCategory = category.toLowerCase();
-            const cards = Array.from(document.querySelectorAll('.integration-card'));
+            const cards = Array.from(document.querySelectorAll('.tool-card'));
             
             if (currentCategory === 'all') {
                 filteredCards = cards;
@@ -510,87 +448,48 @@
                 });
             }
             
-            document.getElementById('searchBox').value = '';
+            if (document.getElementById('searchBox')) {
+                document.getElementById('searchBox').value = '';
+            }
             showFilteredCards();
         }
 
         function searchTools() {
             const searchInput = document.getElementById('searchBox').value.toLowerCase().trim();
-            const cards = Array.from(document.querySelectorAll('.integration-card'));
+            const cards = Array.from(document.querySelectorAll('.tool-card'));
             let activeCategory = document.querySelector('.category-pill.active').getAttribute('data-category').toLowerCase();
             let tempCards = cards.filter(card => {
                 const cardCategory = card.getAttribute('data-category').toLowerCase();
                 return activeCategory === 'all' || cardCategory === activeCategory;
             });
+            
             if (searchInput !== '') {
                 tempCards = tempCards.filter(card => {
                     const searchData = card.getAttribute('data-name').toLowerCase();
-                    const cardCategory = card.getAttribute('data-category').toLowerCase();
-                    return searchData.includes(searchInput) || cardCategory.includes(searchInput);
+                    return searchData.includes(searchInput);
                 });
             }
+            
             filteredCards = tempCards;
             showFilteredCards();
         }
 
         function showFilteredCards() {
-            document.querySelectorAll('.integration-card').forEach(card => {
+            document.querySelectorAll('.tool-card').forEach(card => {
                 card.classList.add('hidden');
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
             });
+            
             filteredCards.forEach((card, index) => {
                 card.classList.remove('hidden');
                 setTimeout(() => {
                     card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
-                }, 50 * index);
+                }, 30 * index);
             });
         }
-
-        document.getElementById('searchBox').addEventListener('input', searchTools);
-        document.addEventListener('DOMContentLoaded', function() {
-            filterByCategory('all');
-        });
-
-        // Toggle Sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const body = document.body;
-
-            if (sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                body.style.overflow = '';
-            } else {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                body.style.overflow = 'hidden';
-            }
-
-        }
-
-        // Close sidebar when clicking overlay
-        document.getElementById('overlay').addEventListener('click', (e) => {
-            if (e.target.id === 'overlay') {
-                toggleSidebar();
-            }
-        });
-
-        // Close sidebar when pressing Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && document.getElementById('sidebar').classList.contains('open')) {
-                toggleSidebar();
-            }
-        });
-
-        // Initialize mobile menu button
-        document.getElementById('mobileMenuBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleSidebar();
-        });
     </script>
 </body>
 </html> 
