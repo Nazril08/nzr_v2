@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Text to Speech - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f0f4ff 0%, #f5f7ff 100%);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.15);
+            max-width: 1200px;
+            width: 100%;
+            padding: 3rem;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tips-card {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 5px solid var(--primary-color);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .tips-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .tips-card h3 {
+            color: var(--primary-dark);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .tips-card ul {
+            list-style-type: none;
+            padding: 0;
+            space-y: 0.5rem;
+        }
+
+        .tips-card li {
+            display: flex;
+            align-items: center;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .tips-card li:hover {
+            opacity: 1;
+        }
+
+        .tips-card li i {
+            color: var(--accent-color);
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .title {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            letter-spacing: -0.05em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            opacity: 0.9;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border: 2px solid rgba(99, 102, 241, 0.15);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            background-color: rgba(99, 102, 241, 0.02);
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .char-count {
+            text-align: right;
+            color: var(--primary-dark);
+            opacity: 0.7;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-convert {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-convert:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .range-slider {
+            width: 100%;
+            margin-top: 0.75rem;
+            appearance: none;
+            background: rgba(99, 102, 241, 0.1);
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .range-value {
+            text-align: center;
+            color: var(--primary-dark);
+            font-weight: 600;
+            margin-top: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .audio-player {
+            margin-top: 1rem;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+
+        .status-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                padding: 2rem;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="tips-card">
+                <h3>Tips for Best Results:</h3>
+                <ul>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        Keep text under 150 characters
+                    </li>
+                    <li>
+                        <i class="fas fa-magic"></i>
+                        Choose appropriate voice model
+                    </li>
+                    <li>
+                        <i class="fas fa-tachometer-alt"></i>
+                        Adjust speech speed as needed
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <h1 class="title">Anime Text-to-Speech</h1>
+
+            <div class="space-y-4">
+                <div class="form-group">
+                    <label for="text" class="form-label">Text to Convert</label>
+                    <textarea 
+                        id="text" 
+                        class="form-input min-h-[100px] max-h-[300px] resize-y"
+                        placeholder="Enter text to convert to speech (max 150 characters)"
+                        maxlength="150"
+                        rows="4"
+                    ></textarea>
+                    <div id="charCount" class="char-count">0/150 characters (150 remaining)</div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="language" class="form-label">Language</label>
+                        <select 
+                            id="language" 
+                            class="form-select"
+                        >
+                            <option value="English">English</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Mix">Mix</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="model" class="form-label">Voice Model</label>
+                        <select 
+                            id="model" 
+                            class="form-select"
+                        >
+                            <!-- Umamusume Pretty Derby Characters -->
+                            <optgroup label="Umamusume Pretty Derby">
+                                <option value="特別周 Special Week (Umamusume Pretty Derby)">Special Week</option>
+                                <option value="无声铃鹿 Silence Suzuka (Umamusume Pretty Derby)">Silence Suzuka</option>
+                                <option value="东海帝王 Tokai Teio (Umamusume Pretty Derby)">Tokai Teio</option>
+                                <option value="丸善斯基 Maruzensky (Umamusume Pretty Derby)">Maruzensky</option>
+                                <option value="富士奇石 Fuji Kiseki (Umamusume Pretty Derby)">Fuji Kiseki</option>
+                                <option value="小栗帽 Oguri Cap (Umamusume Pretty Derby)">Oguri Cap</option>
+                                <option value="黄金船 Gold Ship (Umamusume Pretty Derby)">Gold Ship</option>
+                                <option value="伏特加 Vodka (Umamusume Pretty Derby)">Vodka</option>
+                                <option value="大和赤骥 Daiwa Scarlet (Umamusume Pretty Derby)">Daiwa Scarlet</option>
+                                <option value="大树快车 Taiki Shuttle (Umamusume Pretty Derby)">Taiki Shuttle</option>
+                                <option value="草上飞 Grass Wonder (Umamusume Pretty Derby)">Grass Wonder</option>
+                                <option value="目白麦昆 Mejiro McQueen (Umamusume Pretty Derby)">Mejiro McQueen</option>
+                                <option value="神鹰 El Condor Pasa (Umamusume Pretty Derby)">El Condor Pasa</option>
+                                <option value="好歌剧 T.M. Opera O (Umamusume Pretty Derby)">T.M. Opera O</option>
+                                <option value="成田白仁 Narita Brian (Umamusume Pretty Derby)">Narita Brian</option>
+                                <option value="鲁道夫象征 Symboli Rudolf (Umamusume Pretty Derby)">Symboli Rudolf</option>
+                                <option value="气槽 Air Groove (Umamusume Pretty Derby)">Air Groove</option>
+                                <option value="爱丽数码 Agnes Digital (Umamusume Pretty Derby)">Agnes Digital</option>
+                                <option value="青云天空 Seiun Sky (Umamusume Pretty Derby)">Seiun Sky</option>
+                                <option value="米浴 Rice Shower (Umamusume Pretty Derby)">Rice Shower</option>
+                                <option value="超级小海湾 Super Creek (Umamusume Pretty Derby)">Super Creek</option>
+                                <option value="醒目飞鹰 Smart Falcon (Umamusume Pretty Derby)">Smart Falcon</option>
+                                <option value="优秀素质 Nice Nature (Umamusume Pretty Derby)">Nice Nature</option>
+                                <option value="帝王光环 King Halo (Umamusume Pretty Derby)">King Halo</option>
+                                <option value="待兼福来 Matikane Fukukitaru (Umamusume Pretty Derby)">Matikane Fukukitaru</option>
+                                <option value="目白雷恩 Mejiro Ryan (Umamusume Pretty Derby)">Mejiro Ryan</option>
+                                <option value="菱亚马逊 Hishi Amazon (Umamusume Pretty Derby)">Hishi Amazon</option>
+                                <option value="重炮 Sakura Bakushin O (Umamusume Pretty Derby)">Sakura Bakushin O</option>
+                                <option value="曼城茶座 Manhattan Cafe (Umamusume Pretty Derby)">Manhattan Cafe</option>
+                                <option value="美妙姿势 Fine Motion (Umamusume Pretty Derby)">Fine Motion</option>
+                                <option value="目白多伯 Mejiro Dober (Umamusume Pretty Derby)">Mejiro Dober</option>
+                                <option value="川上公主 Kawakami Princess (Umamusume Pretty Derby)">Kawakami Princess</option>
+                                <option value="黄金城市 Gold City (Umamusume Pretty Derby)">Gold City</option>
+                                <option value="樱花进王 Sakura Chiyono O (Umamusume Pretty Derby)">Sakura Chiyono O</option>
+                                <option value="采珠 Seeking the Pearl (Umamusume Pretty Derby)">Seeking the Pearl</option>
+                                <option value="真机伶 Mayano Top Gun (Umamusume Pretty Derby)">Mayano Top Gun</option>
+                                <option value="胜利奖券 Winning Ticket (Umamusume Pretty Derby)">Winning Ticket</option>
+                                <option value="空中神宫 Air Shakur (Umamusume Pretty Derby)">Air Shakur</option>
+                                <option value="荣进闪耀 Eishin Flash (Umamusume Pretty Derby)">Eishin Flash</option>
+                                <option value="玉藻十字 Tamamo Cross (Umamusume Pretty Derby)">Tamamo Cross</option>
+                            </optgroup>
+                            <!-- Genshin Impact Characters -->
+                            <optgroup label="Genshin Impact">
+                                <option value="五郎 Gorou (Genshin Impact)" selected>Gorou</option>
+                                <option value="胡桃 Hu Tao (Genshin Impact)">Hu Tao</option>
+                                <option value="雷电将军 Raiden Shogun (Genshin Impact)">Raiden Shogun</option>
+                                <option value="八重神子 Yae Miko (Genshin Impact)">Yae Miko</option>
+                                <option value="宵宫 Yoimiya (Genshin Impact)">Yoimiya</option>
+                                <option value="神里绫华 Kamisato Ayaka (Genshin Impact)">Kamisato Ayaka</option>
+                                <option value="优菈 Eula (Genshin Impact)">Eula</option>
+                                <option value="甘雨 Ganyu (Genshin Impact)">Ganyu</option>
+                                <option value="刻晴 Keqing (Genshin Impact)">Keqing</option>
+                                <option value="莫娜 Mona (Genshin Impact)">Mona</option>
+                                <option value="七七 Qiqi (Genshin Impact)">Qiqi</option>
+                                <option value="迪卢克 Diluc (Genshin Impact)">Diluc</option>
+                                <option value="琴 Jean (Genshin Impact)">Jean</option>
+                                <option value="温迪 Venti (Genshin Impact)">Venti</option>
+                                <option value="钟离 Zhongli (Genshin Impact)">Zhongli</option>
+                                <option value="魈 Xiao (Genshin Impact)">Xiao</option>
+                                <option value="阿贝多 Albedo (Genshin Impact)">Albedo</option>
+                                <option value="可莉 Klee (Genshin Impact)">Klee</option>
+                                <option value="达达利亚 Tartaglia (Genshin Impact)">Tartaglia</option>
+                                <option value="珊瑚宫心海 Sangonomiya Kokomi (Genshin Impact)">Sangonomiya Kokomi</option>
+                                <option value="荒泷一斗 Arataki Itto (Genshin Impact)">Arataki Itto</option>
+                                <option value="申鹤 Shenhe (Genshin Impact)">Shenhe</option>
+                                <option value="云堇 Yun Jin (Genshin Impact)">Yun Jin</option>
+                                <option value="神里绫人 Kamisato Ayato (Genshin Impact)">Kamisato Ayato</option>
+                                <option value="夜兰 Yelan (Genshin Impact)">Yelan</option>
+                                <option value="久岐忍 Kuki Shinobu (Genshin Impact)">Kuki Shinobu</option>
+                                <option value="提纳里 Tighnari (Genshin Impact)">Tighnari</option>
+                                <option value="柯莱 Collei (Genshin Impact)">Collei</option>
+                                <option value="多莉 Dori (Genshin Impact)">Dori</option>
+                                <option value="赛诺 Cyno (Genshin Impact)">Cyno</option>
+                                <option value="妮露 Nilou (Genshin Impact)">Nilou</option>
+                                <option value="纳西妲 Nahida (Genshin Impact)">Nahida</option>
+                                <option value="莱依拉 Layla (Genshin Impact)">Layla</option>
+                                <option value="流浪者 Wanderer (Genshin Impact)">Wanderer</option>
+                                <option value="艾尔海森 Alhaitham (Genshin Impact)">Alhaitham</option>
+                                <option value="迪希雅 Dehya (Genshin Impact)">Dehya</option>
+                                <option value="米卡 Mika (Genshin Impact)">Mika</option>
+                                <option value="白术 Baizhu (Genshin Impact)">Baizhu</option>
+                                <option value="卡维 Kaveh (Genshin Impact)">Kaveh</option>
+                                <option value="绮良良 Kirara (Genshin Impact)">Kirara</option>
+                            </optgroup>
+                            
+                            <!-- Honkai: Star Rail Characters -->
+                            <optgroup label="Honkai: Star Rail">
+                                <option value="开拓者 星穹铁道 The Trailblazer (Honkai: Star Rail)">The Trailblazer</option>
+                                <option value="三月七 星穹铁道 March 7th (Honkai: Star Rail)">March 7th</option>
+                                <option value="丹恒 星穹铁道 Dan Heng (Honkai: Star Rail)">Dan Heng</option>
+                                <option value="姬子 星穹铁道 Himeko (Honkai: Star Rail)">Himeko</option>
+                                <option value="瓦尔特 星穹铁道 Welt (Honkai: Star Rail)">Welt</option>
+                                <option value="克拉拉 星穹铁道 Clara (Honkai: Star Rail)">Clara</option>
+                                <option value="杰帕德 星穹铁道 Gepard (Honkai: Star Rail)">Gepard</option>
+                                <option value="布洛妮娅 星穹铁道 Bronya (Honkai: Star Rail)">Bronya</option>
+                                <option value="希儿 星穹铁道 Seele (Honkai: Star Rail)">Seele</option>
+                                <option value="希露瓦 星穹铁道 Serval (Honkai: Star Rail)">Serval</option>
+                                <option value="娜塔莎 星穹铁道 Natasha (Honkai: Star Rail)">Natasha</option>
+                                <option value="佩拉 星穹铁道 Pela (Honkai: Star Rail)">Pela</option>
+                                <option value="虎克 星穹铁道 Hook (Honkai: Star Rail)">Hook</option>
+                                <option value="阿兰 星穹铁道 Arlan (Honkai: Star Rail)">Arlan</option>
+                                <option value="艾丝妲 星穹铁道 Asta (Honkai: Star Rail)">Asta</option>
+                                <option value="白露 星穹铁道 Bailu (Honkai: Star Rail)">Bailu</option>
+                                <option value="停云 星穹铁道 Tingyun (Honkai: Star Rail)">Tingyun</option>
+                                <option value="景元 星穹铁道 Jing Yuan (Honkai: Star Rail)">Jing Yuan</option>
+                                <option value="彦卿 星穹铁道 Yanqing (Honkai: Star Rail)">Yanqing</option>
+                                <option value="青雀 星穹铁道 Qingque (Honkai: Star Rail)">Qingque</option>
+                                <option value="银狼 星穹铁道 Silver Wolf (Honkai: Star Rail)">Silver Wolf</option>
+                                <option value="素裳 星穹铁道 Sushang (Honkai: Star Rail)">Sushang</option>
+                                <option value="罗刹 星穹铁道 Luocha (Honkai: Star Rail)">Luocha</option>
+                                <option value="丹恒•饮月 星穹铁道 Dan Heng • Imbibitor Lunae (Honkai: Star Rail)">Dan Heng • Imbibitor Lunae</option>
+                                <option value="符玄 星穹铁道 Fu Xuan (Honkai: Star Rail)">Fu Xuan</option>
+                                <option value="刃 星穹铁道 Blade (Honkai: Star Rail)">Blade</option>
+                                <option value="托帕&账账 星穹铁道 Topaz & Numby (Honkai: Star Rail)">Topaz & Numby</option>
+                                <option value="镜流 星穹铁道 Jingliu (Honkai: Star Rail)">Jingliu</option>
+                                <option value="桂乃芬 星穹铁道 Guinaifen (Honkai: Star Rail)">Guinaifen</option>
+                                <option value="黑塔 星穹铁道 Herta (Honkai: Star Rail)">Herta</option>
+                            </optgroup>
+
+                            <!-- Other Characters -->
+                            <optgroup label="Other">
+                                <option value="79">綾地 寧々 Ayachi Nene (Sanoba Witch)</option>
+                                <option value="80">因幡 めぐる Inaba Meguru (Sanoba Witch)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="speed" class="form-label">Speech Speed</label>
+                    <input 
+                        type="range" 
+                        id="speed"
+                        min="0.1"
+                        max="5"
+                        step="0.1"
+                        value="1"
+                        class="range-slider"
+                    >
+                    <div id="speedValue" class="range-value">1.0x</div>
+                </div>
+
+                <button 
+                    id="convertBtn" 
+                    class="btn-convert"
+                >
+                    Convert to Speech
+                </button>
+
+                <div id="audioContainer" class="audio-player hidden">
+                    <audio id="audioPlayer" controls class="w-full"></audio>
+                </div>
+
+                <div 
+                    id="status" 
+                    class="status-message hidden"
+                ></div>
+            </div>
+        </div>
+    </div>
+     <!-- Floating Return Home Button -->
+     <div class="fixed bottom-6 right-6 z-50 group">
+        <a href="../../index.html" class="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <div class="relative">
+                <i class="fas fa-home text-xl group-hover:opacity-0 transition-opacity duration-200"></i>
+                <span class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </span>
+            </div>
+            <span class="sr-only">Kembali ke Beranda</span>
+        </a>
+        <div class="absolute -top-10 right-0 transform translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-black bg-opacity-75 text-white text-sm py-1 px-3 rounded whitespace-nowrap">
+            Kembali ke Beranda
+        </div>
+    </div>
+
+    <script src="../../backend/ai/animetts.js"></script>
+</body>
+</html> 

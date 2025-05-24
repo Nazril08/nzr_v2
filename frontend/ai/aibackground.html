@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Background Changer - Multi Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --accent-color: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .page-title {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tips-container {
+            background: linear-gradient(145deg, rgba(239, 246, 255, 0.7), rgba(219, 234, 254, 0.7));
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            width: 100%;
+            outline: none;
+            background-color: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .image-container:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl page-title text-center">AI Background Changer</h1>
+
+        <!-- Tips Section -->
+        <div class="tips-container p-4 mb-6">
+            <div class="flex items-start">
+                <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Tips for Best Results:</h3>
+                    <ul class="text-sm space-y-2 text-blue-800">
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Use clear photos with good lighting</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Make sure the image is in focus</li>
+                        <li><i class="fas fa-check-circle mr-2 text-blue-500"></i>Higher resolution images work better</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glassmorphism p-6 sm:p-8 mb-6">
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Input Section -->
+                <div>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="imageUrl" class="form-label">Image URL</label>
+                            <input 
+                                type="url" 
+                                id="imageUrl" 
+                                class="form-input"
+                                placeholder="Paste image URL"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="prompt" class="form-label">Background Description</label>
+                            <input 
+                                type="text" 
+                                id="prompt" 
+                                class="form-input"
+                                placeholder="Describe new background"
+                            >
+                        </div>
+
+                        <button 
+                            id="changeBackground" 
+                            class="btn-primary w-full"
+                        >
+                            Change Background
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="form-label">Original Image</h3>
+                            <div class="image-container h-64 flex items-center justify-center">
+                                <img 
+                                    id="previewImage" 
+                                    class="max-h-full max-w-full object-contain" 
+                                    src="" 
+                                    alt="Preview"
+                                >
+                                <p id="noImageText" class="text-gray-400">No image uploaded</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="form-label">Result</h3>
+                            <div class="image-container h-64 flex items-center justify-center">
+                                <img 
+                                    id="resultImage" 
+                                    class="max-h-full max-w-full object-contain hidden" 
+                                    src="" 
+                                    alt="Result"
+                                >
+                                <p id="noResultText" class="text-gray-400">No result yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Message -->
+            <div 
+                id="status" 
+                class="mt-4 p-3 rounded-lg text-center hidden"
+            ></div>
+        </div>
+    </div>
+    <!-- Floating Return Home Button -->
+    <div class="fixed bottom-6 right-6 z-50 group">
+        <a href="../../index.html" class="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <div class="relative">
+                <i class="fas fa-home text-xl group-hover:opacity-0 transition-opacity duration-200"></i>
+                <span class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </span>
+            </div>
+            <span class="sr-only">Kembali ke Beranda</span>
+        </a>
+        <div class="absolute -top-10 right-0 transform translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-black bg-opacity-75 text-white text-sm py-1 px-3 rounded whitespace-nowrap">
+            Kembali ke Beranda
+        </div>
+    </div>
+
+    <script src="../../backend/ai/aibackground.js"></script>
+</body>
+</html> 
