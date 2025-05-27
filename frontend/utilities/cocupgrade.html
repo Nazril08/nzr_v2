@@ -370,48 +370,7 @@
         </div>
     </div>
 
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <div class="text-2xl font-bold mb-4">
-                        nzr<span class="font-light">Tools</span>
-                    </div>
-                    <p class="text-gray-400 mb-4">
-                        Toolkit kreatif all-in-one Anda untuk alat AI, pemrosesan gambar, dan pembuatan konten.
-                    </p>
-                </div>
 
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Tautan Cepat</h3>
-                    <ul class="space-y-2">
-                        <li><a href="../../index.html" class="text-gray-400 hover:text-white transition-colors">Beranda</a></li>
-                        <li><a href="../../index.html#tools" class="text-gray-400 hover:text-white transition-colors">Tools</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Tentang</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Kontak</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Terhubung Dengan Kami</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <a href="../../index.html" id="floatingHomeBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white rounded-full p-3 shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-indigo-700">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1241,11 +1200,11 @@ function formatDuration(days, hours, minutes) {
                 }
                 
                 if (parsed.buildings) {
-                    this.buildings = parsed.buildings;
+                    buildings = parsed.buildings;
                 }
                 
                 if (parsed.schedule) {
-                    this.schedule = parsed.schedule.map(item => ({
+                    schedule = parsed.schedule.map(item => ({
                         ...item,
                         startTime: new Date(item.startTime),
                         endTime: new Date(item.endTime)
@@ -1262,9 +1221,9 @@ function formatDuration(days, hours, minutes) {
         // Save data to localStorage
         function saveToLocalStorage() {
             localStorage.setItem('cocUpgradePlanner', JSON.stringify({
-                builders: this.builders,
-                buildings: this.buildings,
-                schedule: this.schedule,
+                builders: builders,
+                buildings: buildings,
+                schedule: schedule,
                 builderCount: userBuilderCount
             }));
         }
