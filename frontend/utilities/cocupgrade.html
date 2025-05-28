@@ -201,11 +201,19 @@
 
                <!-- Middle Column: Building Queue -->
 <div class="bg-white rounded-xl shadow-md p-6 border border-indigo-100">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-        </svg>
-        Building Queue
+    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            Building Queue
+        </div>
+        <button id="manageQueueBtn" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-3 rounded-lg transition-all duration-200 flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Manage Queue
+        </button>
     </h2>
     
     <div class="mb-4">
@@ -310,43 +318,16 @@
                     <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
-                    Timeline Visualization
+                    Builder Timeline
                 </h2>
                 <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="relative mb-4">
-                        <div id="timelineViewport" class="overflow-x-hidden relative w-full" style="height: 300px; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                            <div id="timeline" class="min-w-[800px] h-[300px] relative transition-transform duration-300 ease-out">
-                                <!-- Timeline will be generated here -->
-                            </div>
-                        </div>
-                        <!-- Mobile navigation controls -->
-                        <div class="flex justify-between items-center mt-4">
-                            <button id="scrollLeftBtn" class="timeline-nav-btn bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-full p-2 focus:outline-none">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                </svg>
-                            </button>
-                            <div class="text-sm text-gray-500">Scroll to view timeline</div>
-                            <button id="scrollRightBtn" class="timeline-nav-btn bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-full p-2 focus:outline-none">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <!-- Timeline zoom controls -->
-                        <div class="flex justify-center items-center mt-2">
-                            <button id="zoomOutBtn" class="timeline-nav-btn bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full p-1 focus:outline-none mr-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                                </svg>
-                            </button>
-                            <div class="text-xs text-gray-500">Zoom</div>
-                            <button id="zoomInBtn" class="timeline-nav-btn bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full p-1 focus:outline-none ml-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                            </button>
-                        </div>
+                    <div id="timelineViewport" class="overflow-y-auto max-h-[400px]">
+                        <!-- Timeline will be generated here -->
+                    </div>
+                    
+                    <!-- Empty state message -->
+                    <div id="emptyTimelineMessage" class="text-center text-gray-500 py-10 hidden">
+                        No schedule has been created yet. Click "Create Schedule" to generate your upgrade timeline.
                     </div>
                 </div>
             </div>
@@ -427,6 +408,7 @@
             document.getElementById('generateScheduleBtn').addEventListener('click', generateSchedule);
             document.getElementById('clearScheduleBtn').addEventListener('click', clearSchedule);
             document.getElementById('recommendBtn').addEventListener('click', recommendUpgrades);
+            document.getElementById('manageQueueBtn').addEventListener('click', showQueueManagementModal);
             
             // Show/hide floating home button on scroll
             window.addEventListener('scroll', function() {
@@ -561,21 +543,21 @@
                         <div class="grid grid-cols-3 gap-2 ${builder.status === 'busy' ? '' : 'opacity-50 pointer-events-none'}">
                             <div class="relative">
                                 <input type="number" id="builder${index}_days" placeholder="0" min="0" 
-                                    value="${getBuilderRemainingTime(builder).days}"
+                                    ${getBuilderRemainingTime(builder).days > 0 ? `value="${getBuilderRemainingTime(builder).days}"` : ''}
                                     onchange="updateBuilderDaysHoursMinutes(${index})"
                                     class="w-full pl-2 pr-8 py-1 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 input-focus no-spinner">
                                 <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">Hari</span>
                             </div>
                             <div class="relative">
                                 <input type="number" id="builder${index}_hours" placeholder="0" min="0" max="23" 
-                                    value="${getBuilderRemainingTime(builder).hours}"
+                                    ${getBuilderRemainingTime(builder).hours > 0 ? `value="${getBuilderRemainingTime(builder).hours}"` : ''}
                                     onchange="updateBuilderDaysHoursMinutes(${index})"
                                     class="w-full pl-2 pr-8 py-1 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 input-focus no-spinner">
                                 <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">Jam</span>
                             </div>
                             <div class="relative">
                                 <input type="number" id="builder${index}_minutes" placeholder="0" min="0" max="59" 
-                                    value="${getBuilderRemainingTime(builder).minutes}"
+                                    ${getBuilderRemainingTime(builder).minutes > 0 ? `value="${getBuilderRemainingTime(builder).minutes}"` : ''}
                                     onchange="updateBuilderDaysHoursMinutes(${index})"
                                     class="w-full pl-2 pr-8 py-1 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 input-focus no-spinner">
                                 <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">Menit</span>
@@ -1050,14 +1032,19 @@ function formatDuration(days, hours, minutes) {
             });
         }
         
-        // Render timeline
+        // Render timeline - new implementation for better handling of long periods
         function renderTimeline() {
+            const timelineViewport = document.getElementById('timelineViewport');
+            const emptyTimelineMessage = document.getElementById('emptyTimelineMessage');
             timelineViewport.innerHTML = '';
             
             if (schedule.length === 0) {
-                timelineViewport.innerHTML = '<p class="text-center text-gray-500">Belum ada jadwal yang dibuat.</p>';
+                timelineViewport.innerHTML = '';
+                emptyTimelineMessage.classList.remove('hidden');
                 return;
             }
+            
+            emptyTimelineMessage.classList.add('hidden');
             
             // Group schedule by builder
             const builderSchedules = {};
@@ -1068,103 +1055,182 @@ function formatDuration(days, hours, minutes) {
                 builderSchedules[item.builderId].push(item);
             });
             
-            // Find earliest and latest times
-            let earliestTime = new Date();
-            let latestTime = new Date();
+            // Sort builders by ID
+            const sortedBuilderIds = Object.keys(builderSchedules).sort((a, b) => parseInt(a) - parseInt(b));
             
-            schedule.forEach(item => {
-                if (new Date(item.startTime) < earliestTime) {
-                    earliestTime = new Date(item.startTime);
-                }
-                if (new Date(item.endTime) > latestTime) {
-                    latestTime = new Date(item.endTime);
-                }
-            });
+            // Create a container for each builder's timeline
+            const timelineContainer = document.createElement('div');
+            timelineContainer.className = 'space-y-6';
             
-            // Add some padding
-            earliestTime = new Date(earliestTime.getTime() - 3600000); // 1 hour before
-            latestTime = new Date(latestTime.getTime() + 3600000); // 1 hour after
-            
-            const totalDuration = latestTime.getTime() - earliestTime.getTime();
-            const timelineWidth = 800;
-            
-            // Create builder rows
-            const timelineDiv = document.createElement('div');
-            timelineDiv.className = 'relative';
-            
-            // Add time axis
-            const timeAxis = document.createElement('div');
-            timeAxis.className = 'absolute top-0 left-0 right-0 h-8 border-b border-gray-300';
-            
-            // Add time markers
-            const hoursSpan = Math.ceil((latestTime - earliestTime) / (3600000)); // hours
-            const markerInterval = Math.max(1, Math.floor(hoursSpan / 12)); // show at most 12 markers
-            
-            for (let i = 0; i <= hoursSpan; i += markerInterval) {
-                const markerTime = new Date(earliestTime.getTime() + i * 3600000);
-                const markerPosition = ((markerTime - earliestTime) / totalDuration) * timelineWidth;
-                
-                const marker = document.createElement('div');
-                marker.className = 'absolute top-0 h-2 border-l border-gray-300';
-                marker.style.left = `${markerPosition}px`;
-                
-                const label = document.createElement('div');
-                label.className = 'absolute top-3 text-xs text-gray-500 transform -translate-x-1/2';
-                label.style.left = `${markerPosition}px`;
-                label.textContent = markerTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                
-                timeAxis.appendChild(marker);
-                timeAxis.appendChild(label);
-            }
-            
-            timelineDiv.appendChild(timeAxis);
-            
-            // Add builder rows
-            let rowTop = 40; // Start below time axis
-            
-            Object.keys(builderSchedules).forEach(builderId => {
+            // Process each builder's schedule
+            sortedBuilderIds.forEach(builderId => {
                 const builderItems = builderSchedules[builderId];
+                const builderName = builderItems[0].builderName;
                 
-                // Add builder label
-                const builderLabel = document.createElement('div');
-                builderLabel.className = 'absolute text-sm font-medium text-gray-700';
-                builderLabel.style.top = `${rowTop}px`;
-                builderLabel.style.left = '0';
-                builderLabel.textContent = builderItems[0].builderName;
-                timelineDiv.appendChild(builderLabel);
+                // Sort tasks by start time
+                builderItems.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
                 
-                // Add builder items
-                builderItems.forEach(item => {
-                    const startPosition = ((new Date(item.startTime) - earliestTime) / totalDuration) * timelineWidth;
-                    const itemWidth = (item.duration / totalDuration) * timelineWidth;
+                // Create builder section
+                const builderSection = document.createElement('div');
+                builderSection.className = 'bg-white rounded-lg shadow-sm p-4 border border-gray-200';
+                
+                // Builder header
+                const builderHeader = document.createElement('div');
+                builderHeader.className = 'flex items-center justify-between mb-3';
+                
+                const builderTitle = document.createElement('h3');
+                builderTitle.className = 'font-medium text-gray-800 flex items-center';
+                builderTitle.innerHTML = `
+                    <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    ${builderName}
+                `;
+                
+                const taskCount = document.createElement('span');
+                taskCount.className = 'text-xs font-medium bg-indigo-100 text-indigo-800 py-1 px-2 rounded-full';
+                taskCount.textContent = `${builderItems.length} tasks`;
+                
+                builderHeader.appendChild(builderTitle);
+                builderHeader.appendChild(taskCount);
+                builderSection.appendChild(builderHeader);
+                
+                // Builder timeline
+                const timeline = document.createElement('div');
+                timeline.className = 'space-y-2 mt-2';
+                
+                // Add individual task items
+                builderItems.forEach((item, index) => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'relative flex items-start';
                     
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = `absolute timeline-item ${item.isGoodTime ? 'bg-green-500' : 'bg-yellow-500'}`;
-                    itemDiv.style.top = `${rowTop + 20}px`;
-                    itemDiv.style.left = `${startPosition}px`;
-                    itemDiv.style.width = `${Math.max(5, itemWidth)}px`; // Minimum width for visibility
+                    // Timeline dot and line
+                    const timelineDot = document.createElement('div');
+                    timelineDot.className = `flex-shrink-0 w-4 h-4 rounded-full ${item.isGoodTime ? 'bg-green-500' : 'bg-yellow-500'} mt-1`;
                     
-                    // Add tooltip
-                    itemDiv.title = `${item.buildingName} - ${item.durationText}`;
-                    
-                    // Add label if enough space
-                    if (itemWidth > 50) {
-                        const itemLabel = document.createElement('div');
-                        itemLabel.className = 'absolute top-0 left-0 right-0 text-xs text-white truncate px-1';
-                        itemLabel.textContent = item.buildingName;
-                        itemDiv.appendChild(itemLabel);
+                    // Add connecting line if not the last item
+                    if (index < builderItems.length - 1) {
+                        const connectingLine = document.createElement('div');
+                        connectingLine.className = 'absolute h-full w-0.5 bg-gray-200 left-[7px] top-4';
+                        taskItem.appendChild(connectingLine);
                     }
                     
-                    timelineDiv.appendChild(itemDiv);
+                    // Task content
+                    const taskContent = document.createElement('div');
+                    taskContent.className = 'ml-4 flex-grow pb-5';
+                    
+                    // Task header with time and status
+                    const taskHeader = document.createElement('div');
+                    taskHeader.className = 'flex items-center justify-between';
+                    
+                    const taskName = document.createElement('h4');
+                    taskName.className = 'text-sm font-medium text-gray-900';
+                    taskName.textContent = item.buildingName;
+                    
+                    const taskCategory = document.createElement('span');
+                    let categoryColor = '';
+                    switch(item.buildingCategory) {
+                        case 'defense': categoryColor = 'bg-red-100 text-red-800'; break;
+                        case 'resource': categoryColor = 'bg-yellow-100 text-yellow-800'; break;
+                        case 'army': categoryColor = 'bg-purple-100 text-purple-800'; break;
+                        case 'wall': categoryColor = 'bg-blue-100 text-blue-800'; break;
+                        default: categoryColor = 'bg-gray-100 text-gray-800';
+                    }
+                    taskCategory.className = `text-xs ${categoryColor} px-2 py-0.5 rounded-full ml-2`;
+                    taskCategory.textContent = item.buildingCategory.charAt(0).toUpperCase() + item.buildingCategory.slice(1);
+                    
+                    taskHeader.appendChild(taskName);
+                    taskHeader.appendChild(taskCategory);
+                    
+                    // Time information
+                    const timeInfo = document.createElement('div');
+                    timeInfo.className = 'mt-1 text-xs text-gray-500 flex items-center';
+                    
+                    const startTime = new Date(item.startTime);
+                    const endTime = new Date(item.endTime);
+                    
+                    const formattedStartTime = startTime.toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const formattedEndTime = endTime.toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    timeInfo.innerHTML = `
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        ${formattedStartTime} - ${formattedEndTime} (${item.durationText})
+                    `;
+                    
+                    // Priority indicator
+                    const priorityLabel = document.createElement('div');
+                    priorityLabel.className = 'mt-1 flex items-center';
+                    
+                    let priorityText = '';
+                    let priorityColor = '';
+                    switch(item.priority) {
+                        case 'high': 
+                            priorityText = 'High Priority';
+                            priorityColor = 'text-red-500';
+                            break;
+                        case 'medium': 
+                            priorityText = 'Medium Priority';
+                            priorityColor = 'text-yellow-500';
+                            break;
+                        case 'low': 
+                            priorityText = 'Low Priority';
+                            priorityColor = 'text-green-500';
+                            break;
+                    }
+                    
+                    priorityLabel.innerHTML = `
+                        <span class="text-xs ${priorityColor} flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            ${priorityText}
+                        </span>
+                        
+                        <span class="text-xs ml-2 flex items-center ${item.isGoodTime ? 'text-green-500' : 'text-yellow-500'}">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            ${item.isGoodTime ? 'Optimal Time' : 'Suboptimal Time'}
+                        </span>
+                    `;
+                    
+                    // Assemble task content
+                    taskContent.appendChild(taskHeader);
+                    taskContent.appendChild(timeInfo);
+                    taskContent.appendChild(priorityLabel);
+                    
+                    // Assemble task item
+                    taskItem.appendChild(timelineDot);
+                    taskItem.appendChild(taskContent);
+                    
+                    // Add to timeline
+                    timeline.appendChild(taskItem);
                 });
                 
-                rowTop += 60; // Next row
+                builderSection.appendChild(timeline);
+                timelineContainer.appendChild(builderSection);
             });
             
-            // Set timeline height
-            timelineDiv.style.height = `${rowTop + 20}px`;
-            
-            timelineViewport.appendChild(timelineDiv);
+            timelineViewport.appendChild(timelineContainer);
+        }
+        
+        // Timeline mobile navigation functions is no longer needed since we've simplified the timeline
+        function initTimelineControls() {
+            // Nothing to do with the new implementation
+            // The new timeline is scrollable by default and doesn't need special controls
         }
         
         // Load data from localStorage
@@ -1248,93 +1314,6 @@ function formatDuration(days, hours, minutes) {
             saveToLocalStorage();
         }
         
-        // Timeline mobile navigation functions
-        function initTimelineControls() {
-            const timeline = document.getElementById('timeline');
-            const scrollLeftBtn = document.getElementById('scrollLeftBtn');
-            const scrollRightBtn = document.getElementById('scrollRightBtn');
-            const zoomInBtn = document.getElementById('zoomInBtn');
-            const zoomOutBtn = document.getElementById('zoomOutBtn');
-            const timelineViewport = document.getElementById('timelineViewport');
-            
-            let currentPosition = 0;
-            let currentScale = 1;
-            const scrollStep = 100;
-            const scaleStep = 0.1;
-            const maxScale = 2;
-            const minScale = 0.5;
-            
-            // Add touch scrolling for timeline
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            timelineViewport.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            });
-            
-            timelineViewport.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            });
-            
-            function handleSwipe() {
-                const swipeDistance = touchStartX - touchEndX;
-                if (Math.abs(swipeDistance) > 30) { // Minimum swipe distance
-                    if (swipeDistance > 0) {
-                        // Swipe left
-                        scrollTimelineRight();
-                    } else {
-                        // Swipe right
-                        scrollTimelineLeft();
-                    }
-                }
-            }
-            
-            // Scroll left button
-            scrollLeftBtn.addEventListener('click', scrollTimelineLeft);
-            
-            // Scroll right button
-            scrollRightBtn.addEventListener('click', scrollTimelineRight);
-            
-            // Zoom in button
-            zoomInBtn.addEventListener('click', () => {
-                if (currentScale < maxScale) {
-                    currentScale += scaleStep;
-                    updateTimelineTransform();
-                }
-            });
-            
-            // Zoom out button
-            zoomOutBtn.addEventListener('click', () => {
-                if (currentScale > minScale) {
-                    currentScale -= scaleStep;
-                    updateTimelineTransform();
-                }
-            });
-            
-            function scrollTimelineLeft() {
-                currentPosition += scrollStep;
-                if (currentPosition > 0) currentPosition = 0;
-                updateTimelineTransform();
-            }
-            
-            function scrollTimelineRight() {
-                const timelineWidth = timeline.offsetWidth;
-                const viewportWidth = timelineViewport.offsetWidth;
-                
-                currentPosition -= scrollStep;
-                // Prevent scrolling too far right
-                const minPosition = viewportWidth - timelineWidth * currentScale;
-                if (currentPosition < minPosition) currentPosition = minPosition;
-                updateTimelineTransform();
-            }
-            
-            function updateTimelineTransform() {
-                timeline.style.transform = `translateX(${currentPosition}px) scale(${currentScale})`;
-                timeline.style.transformOrigin = 'left center';
-            }
-        }
-        
         // Recommend upgrades during sleep/inactive time
         function recommendUpgrades() {
             if (buildings.length === 0) {
@@ -1402,7 +1381,7 @@ function formatDuration(days, hours, minutes) {
                             <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                             </svg>
-                            Rekomendasi Upgrade
+                            Recommend Upgrades
                         </h3>
                         <button id="closeRecommendModal" class="text-gray-400 hover:text-gray-500">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1413,8 +1392,8 @@ function formatDuration(days, hours, minutes) {
                     
                     <div class="bg-indigo-50 p-4 rounded-lg mb-4">
                         <p class="text-sm text-indigo-800">
-                            Berdasarkan waktu tidur Anda (${sleepTimeStr} - ${wakeTimeStr}, ${sleepDurationHours} jam),
-                            berikut adalah rekomendasi upgrade yang cocok dilakukan selama periode tidak aktif.
+                            Based on your sleep time (${sleepTimeStr} - ${wakeTimeStr}, ${sleepDurationHours} hours),
+                            here are recommended upgrades suitable for your inactive period.
                         </p>
                     </div>
             `;
@@ -1425,8 +1404,8 @@ function formatDuration(days, hours, minutes) {
                         <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <p class="text-gray-500">Tidak ada bangunan yang cocok untuk durasi tidur Anda.</p>
-                        <p class="text-gray-400 text-sm mt-1">Coba tambahkan bangunan dengan durasi upgrade lebih lama.</p>
+                        <p class="text-gray-500">No buildings match your sleep duration.</p>
+                        <p class="text-gray-400 text-sm mt-1">Try adding buildings with longer upgrade duration.</p>
                     </div>
                 `;
             } else {
@@ -1435,9 +1414,9 @@ function formatDuration(days, hours, minutes) {
                         <table class="min-w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bangunan</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durasi</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kesesuaian</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Building</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fit</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -1481,7 +1460,7 @@ function formatDuration(days, hours, minutes) {
             modalContent += `
                     <div class="mt-5">
                         <button id="closeRecommendBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300">
-                            Tutup
+                            Close
                         </button>
                     </div>
                 </div>
@@ -1505,6 +1484,216 @@ function formatDuration(days, hours, minutes) {
                     document.body.removeChild(modalBackdrop);
                 }
             });
+        }
+        
+        // Show queue management modal for deletion
+        function showQueueManagementModal() {
+            if (buildings.length === 0) {
+                alert('No buildings in queue to manage.');
+                return;
+            }
+            
+            // Create modal backdrop
+            const modalBackdrop = document.createElement('div');
+            modalBackdrop.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modalBackdrop.id = 'queueManagementModal';
+            
+            // Create modal content
+            let modalContent = `
+                <div class="bg-white rounded-xl shadow-lg p-6 max-w-lg w-full mx-4">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                            Manage Building Queue
+                        </h3>
+                        <button id="closeQueueModal" class="text-gray-400 hover:text-gray-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="bg-indigo-50 p-4 rounded-lg mb-4">
+                        <p class="text-sm text-indigo-800">
+                            Select buildings to remove from the queue or use the bulk actions.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4 flex justify-between">
+                        <button id="selectAllBtn" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-3 rounded-lg transition-all duration-200">
+                            Select All
+                        </button>
+                        <button id="deleteSelectedBtn" class="text-sm bg-red-100 hover:bg-red-200 text-red-700 py-1 px-3 rounded-lg transition-all duration-200 hidden">
+                            Delete Selected
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-y-auto max-h-72">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Building</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="queueModalList">
+            `;
+            
+            buildings.forEach(building => {
+                // Set category name
+                let categoryName = '';
+                switch(building.category) {
+                    case 'defense': categoryName = 'Defense'; break;
+                    case 'resource': categoryName = 'Resource'; break;
+                    case 'army': categoryName = 'Army'; break;
+                    case 'wall': categoryName = 'Wall'; break;
+                    default: categoryName = 'Other';
+                }
+                
+                modalContent += `
+                    <tr data-id="${building.id}">
+                        <td class="px-3 py-2">
+                            <input type="checkbox" class="building-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                        </td>
+                        <td class="px-3 py-2">
+                            <div class="font-medium text-gray-900">${building.name}</div>
+                            <div class="text-xs text-gray-500">${categoryName}</div>
+                        </td>
+                        <td class="px-3 py-2">
+                            <div class="text-sm text-gray-600">${building.durationText}</div>
+                        </td>
+                        <td class="px-3 py-2 text-right">
+                            <button onclick="deleteBuildingFromModal(${building.id})" class="text-red-600 hover:text-red-900 transition-colors p-1 rounded-full hover:bg-red-50">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            modalContent += `
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <button id="closeQueueBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modalBackdrop.innerHTML = modalContent;
+            document.body.appendChild(modalBackdrop);
+            
+            // Add event listeners
+            document.getElementById('closeQueueModal').addEventListener('click', () => {
+                document.body.removeChild(modalBackdrop);
+            });
+            
+            document.getElementById('closeQueueBtn').addEventListener('click', () => {
+                document.body.removeChild(modalBackdrop);
+            });
+            
+            // Close on backdrop click
+            modalBackdrop.addEventListener('click', (e) => {
+                if (e.target === modalBackdrop) {
+                    document.body.removeChild(modalBackdrop);
+                }
+            });
+            
+            // Select all functionality
+            document.getElementById('selectAllBtn').addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('.building-checkbox');
+                const isAllSelected = [...checkboxes].every(checkbox => checkbox.checked);
+                
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = !isAllSelected;
+                });
+                
+                updateDeleteSelectedButton();
+            });
+            
+            // Add checkbox change listeners
+            const checkboxes = document.querySelectorAll('.building-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateDeleteSelectedButton);
+            });
+            
+            // Initial state of delete selected button
+            updateDeleteSelectedButton();
+            
+            // Delete selected button functionality
+            document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelectedBuildings);
+        }
+        
+        // Update delete selected button visibility
+        function updateDeleteSelectedButton() {
+            const checkboxes = document.querySelectorAll('.building-checkbox');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            
+            const hasSelectedItems = [...checkboxes].some(checkbox => checkbox.checked);
+            
+            if (hasSelectedItems) {
+                deleteSelectedBtn.classList.remove('hidden');
+            } else {
+                deleteSelectedBtn.classList.add('hidden');
+            }
+        }
+        
+        // Delete building from modal
+        function deleteBuildingFromModal(id) {
+            buildings = buildings.filter(building => building.id !== id);
+            renderBuildingQueue();
+            saveToLocalStorage();
+            
+            // Update the modal list
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+            
+            // If no buildings left, close the modal
+            if (buildings.length === 0) {
+                const modal = document.getElementById('queueManagementModal');
+                if (modal) {
+                    document.body.removeChild(modal);
+                }
+            }
+        }
+        
+        // Delete selected buildings
+        function deleteSelectedBuildings() {
+            const checkboxes = document.querySelectorAll('.building-checkbox:checked');
+            const selectedIds = [...checkboxes].map(checkbox => {
+                return parseInt(checkbox.closest('tr').dataset.id);
+            });
+            
+            if (selectedIds.length > 0) {
+                if (confirm(`Are you sure you want to delete ${selectedIds.length} building(s)?`)) {
+                    buildings = buildings.filter(building => !selectedIds.includes(building.id));
+                    renderBuildingQueue();
+                    saveToLocalStorage();
+                    
+                    // Close the modal
+                    const modal = document.getElementById('queueManagementModal');
+                    if (modal) {
+                        document.body.removeChild(modal);
+                    }
+                    
+                    // If all buildings were deleted, show the modal again
+                    if (buildings.length > 0) {
+                        showQueueManagementModal();
+                    }
+                }
+            }
         }
         
         // Initialize the app when the DOM is loaded
