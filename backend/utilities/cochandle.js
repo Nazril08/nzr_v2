@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Town Hall level selector functionality
 function initTownHallLevelSelector() {
-    const thLevelBtns = document.querySelectorAll('.th-level-btn');
+    const townHallSelector = document.getElementById('townHallSelector');
     const thLevelDataContainer = document.getElementById('thLevelDataContainer');
     const thLevelTitle = document.getElementById('thLevelTitle');
     const thLevelData = document.getElementById('thLevelData');
@@ -18,32 +18,24 @@ function initTownHallLevelSelector() {
     let currentTHLevel = null;
     let selectedDefenses = [];
     
-    // Add event listeners to TH level buttons
-    thLevelBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Reset previous selection
-            thLevelBtns.forEach(b => b.classList.remove('bg-indigo-500', 'text-white', 'border-indigo-500'));
-            
-            // Set active button
-            btn.classList.add('bg-indigo-500', 'text-white', 'border-indigo-500');
-            
-            // Get selected TH level
-            const level = btn.dataset.level;
-            currentTHLevel = parseInt(level);
-            
-            // Update title
-            thLevelTitle.querySelector('span').textContent = level;
-            
-            // Show data container
-            thLevelDataContainer.classList.remove('hidden');
-            
-            // Reset selected defenses
-            selectedDefenses = [];
-            updateAddToQueueButton();
-            
-            // Load all defenses
-            loadAllDefenses();
-        });
+    // Add event listener to TH level dropdown
+    townHallSelector.addEventListener('change', () => {
+        // Get selected TH level
+        const level = townHallSelector.value;
+        currentTHLevel = parseInt(level);
+        
+        // Update title
+        thLevelTitle.querySelector('span').textContent = level;
+        
+        // Show data container
+        thLevelDataContainer.classList.remove('hidden');
+        
+        // Reset selected defenses
+        selectedDefenses = [];
+        updateAddToQueueButton();
+        
+        // Load all defenses
+        loadAllDefenses();
     });
     
     // Add event listener to defense button
@@ -105,6 +97,7 @@ function initTownHallLevelSelector() {
             const damagePerSecond = defense.damagePerSecond || 'N/A';
             const damagePerShot = defense.damagePerShot || defense.damagePerAttack || 'N/A';
             const hitpoints = defense.hitpoints || 'N/A';
+            const damagePerAttack = defense.damagePerAttack || 'N/A';
             
             // Create defense card
             const card = document.createElement('div');
@@ -139,15 +132,21 @@ function initTownHallLevelSelector() {
             
             card.innerHTML = `
                 <div class="flex items-start justify-between">
-                    <div>
-                        <h4 class="text-lg font-medium text-gray-900">${name} Level ${level}</h4>
-                        <p class="text-sm text-gray-600">${damageDisplay}</p>
-                        <p class="text-sm text-gray-600">HP: ${hitpoints}</p>
-                        <p class="text-sm text-gray-600">Upgrade Time: ${upgradeTime}</p>
-                        <p class="text-sm text-gray-600">Cost: ${upgradeCost}</p>
+                    <div class="flex-1">
+                        <h4 class="text-lg font-medium text-gray-900 mb-1">${name} Level ${level}</h4>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-1">
+                            <p class="text-sm text-gray-700"><span class="font-medium">DPS:</span> ${damagePerSecond}</p>
+                            <p class="text-sm text-gray-700"><span class="font-medium">HP:</span> ${hitpoints}</p>
+                            ${damagePerShot !== 'N/A' ? `<p class="text-sm text-gray-700"><span class="font-medium">Damage/Shot:</span> ${damagePerShot}</p>` : ''}
+                            ${damagePerAttack !== 'N/A' && damagePerAttack !== damagePerSecond ? `<p class="text-sm text-gray-700"><span class="font-medium">Damage/Attack:</span> ${damagePerAttack}</p>` : ''}
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-gray-200">
+                            <p class="text-sm text-indigo-700 font-medium">Upgrade Time: ${upgradeTime}</p>
+                            <p class="text-sm text-amber-700 font-medium">Cost: ${upgradeCost}</p>
+                        </div>
                     </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" class="defense-checkbox h-5 w-5 text-indigo-600 border-gray-300 rounded"
+                    <div class="ml-4 flex items-center">
+                        <input type="checkbox" class="defense-checkbox h-5 w-5 text-indigo-600 border-gray-300 rounded cursor-pointer focus:ring-indigo-500"
                             data-name="${name}"
                             data-level="${level}"
                             data-type="${type}"
