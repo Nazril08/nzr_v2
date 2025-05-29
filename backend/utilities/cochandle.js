@@ -20,22 +20,22 @@ function initTownHallLevelSelector() {
     
     // Add event listener to TH level dropdown
     townHallSelector.addEventListener('change', () => {
-        // Get selected TH level
+            // Get selected TH level
         const level = townHallSelector.value;
-        currentTHLevel = parseInt(level);
-        
-        // Update title
-        thLevelTitle.querySelector('span').textContent = level;
-        
-        // Show data container
-        thLevelDataContainer.classList.remove('hidden');
-        
-        // Reset selected defenses
-        selectedDefenses = [];
-        updateAddToQueueButton();
-        
+            currentTHLevel = parseInt(level);
+            
+            // Update title
+            thLevelTitle.querySelector('span').textContent = level;
+            
+            // Show data container
+            thLevelDataContainer.classList.remove('hidden');
+            
+            // Reset selected defenses
+            selectedDefenses = [];
+            updateAddToQueueButton();
+            
         // Load all defenses
-        loadAllDefenses();
+            loadAllDefenses();
     });
     
     // Add event listener to defense button

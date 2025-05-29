@@ -141,7 +141,7 @@ const cocApi = {
             return {
                 defenses: this.cache.data.defenses.filter(defense => defense.type === type)
             };
-        } else {
+                } else {
             // Return semua data
             return this.cache.data;
         }

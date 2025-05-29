@@ -13,6 +13,8 @@ let builders = [];
 let buildings = [];
 let schedule = [];
 let userBuilderCount = NUM_BUILDERS; // Track user's builder count
+let selectedScheduleTasks = {}; // Track which schedule task is selected per builder
+let firstCheckedTaskIndices = {}; // Track the index of the first checked task per builder
 
 // Initialize the app
 function initApp() {
@@ -552,6 +554,9 @@ function generateSchedule() {
         return;
     }
     
+    // Store the current selected tasks before clearing the schedule
+    const previousSelectedTasks = {...selectedScheduleTasks};
+    
     // Sort buildings by priority and duration
     const sortedBuildings = [...buildings].sort((a, b) => {
         // First sort by priority
@@ -573,6 +578,8 @@ function generateSchedule() {
     
     // Clear previous schedule
     schedule = [];
+    // Reset selected tasks since the building IDs will change
+    selectedScheduleTasks = {};
     
     // Assign buildings to builders
     sortedBuildings.forEach(building => {
@@ -656,14 +663,34 @@ function renderSchedule() {
         const builderDiv = document.createElement('div');
         builderDiv.className = 'border rounded-lg p-4 bg-gradient-to-r from-indigo-50 to-blue-50';
         
+        // Get the builder's initial task from builder status
+        const builder = builders.find(b => b.id === parseInt(builderId));
+        const initialTask = builder ? builder.currentTask : null;
+        
+        // Determine the builder display name
+        const baseBuilderName = builderItems[0].builderName;
+        let builderDisplayName = baseBuilderName;
+        
+        // If we have a selected task for this builder, use that for the name
+        if (selectedScheduleTasks[builderId]) {
+            const selectedTask = builderItems.find(item => item.buildingId === selectedScheduleTasks[builderId]);
+            if (selectedTask) {
+                builderDisplayName = `${baseBuilderName} - ${selectedTask.buildingName}`;
+            }
+        // Otherwise, if there's an initial task from builder status, use that
+        } else if (initialTask) {
+            builderDisplayName = `${baseBuilderName} - ${initialTask}`;
+        }
+        
         // Builder header
         const builderHeader = document.createElement('h3');
         builderHeader.className = 'font-semibold text-gray-800 mb-2 flex items-center';
+        builderHeader.id = `builderScheduleHeader_${builderId}`;
         builderHeader.innerHTML = `
             <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
             </svg>
-            ${builderItems[0].builderName}
+            ${builderDisplayName}
         `;
         builderDiv.appendChild(builderHeader);
         
@@ -671,7 +698,7 @@ function renderSchedule() {
         const scheduleList = document.createElement('ul');
         scheduleList.className = 'space-y-2';
         
-        builderItems.forEach(item => {
+        builderItems.forEach((item, index) => {
             const scheduleItem = document.createElement('li');
             scheduleItem.className = 'flex items-center space-x-2 p-2 rounded-lg ' + 
                 (item.isGoodTime ? 'bg-green-50 border border-green-100' : 'bg-yellow-50 border border-yellow-100');
@@ -704,8 +731,21 @@ function renderSchedule() {
                     </svg>`;
             }
             
+            // Create checkbox input
+            const isChecked = selectedScheduleTasks[builderId] === item.buildingId;
+            const checkboxId = `scheduleTask_${builderId}_${item.buildingId}`;
+            
             scheduleItem.innerHTML = `
                 <div class="flex-shrink-0">
+                    <input type="checkbox" id="${checkboxId}" 
+                        class="schedule-task-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                        data-builder-id="${builderId}" 
+                        data-building-id="${item.buildingId}"
+                        data-building-name="${item.buildingName}"
+                        data-task-index="${index}"
+                        ${isChecked ? 'checked' : ''}>
+                </div>
+                <div class="flex-shrink-0 ml-2">
                     ${categoryIcon}
                 </div>
                 <div class="flex-grow">
@@ -727,6 +767,111 @@ function renderSchedule() {
         builderDiv.appendChild(scheduleList);
         scheduleContainer.appendChild(builderDiv);
     });
+    
+    // Add event listeners to all checkboxes
+    document.querySelectorAll('.schedule-task-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', handleScheduleTaskSelection);
+    });
+}
+
+// Handle schedule task selection (checkbox change)
+function handleScheduleTaskSelection(event) {
+    const builderId = this.dataset.builderId;
+    const buildingId = this.dataset.buildingId;
+    const buildingName = this.dataset.buildingName;
+    const taskIndex = parseInt(this.dataset.taskIndex);
+    const baseBuilderName = schedule.find(item => item.builderId === parseInt(builderId))?.builderName || '';
+    const scheduleHeaderElement = document.getElementById(`builderScheduleHeader_${builderId}`);
+    const timelineHeaderElement = document.getElementById(`timelineBuilderHeader_${builderId}`);
+    
+    // Uncheck all other checkboxes for this builder
+    if (this.checked) {
+        document.querySelectorAll(`.schedule-task-checkbox[data-builder-id="${builderId}"]`).forEach(cb => {
+            if (cb !== this) {
+                cb.checked = false;
+            }
+        });
+        
+        // Store the selected task
+        selectedScheduleTasks[builderId] = buildingId;
+        
+        // Store the index of this task
+        firstCheckedTaskIndices[builderId] = taskIndex;
+        
+        // Update the schedule builder header
+        if (scheduleHeaderElement) {
+            scheduleHeaderElement.innerHTML = `
+                <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                ${baseBuilderName} - ${buildingName}
+            `;
+        }
+        
+        // Update the timeline builder header
+        if (timelineHeaderElement) {
+            timelineHeaderElement.innerHTML = `
+                <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                ${baseBuilderName} - ${buildingName}
+            `;
+        }
+    } else {
+        // Clear the selected task
+        delete selectedScheduleTasks[builderId];
+        
+        // Clear the first checked task index
+        delete firstCheckedTaskIndices[builderId];
+        
+        // Reset the builder header to the initial task or just the builder name
+        const builder = builders.find(b => b.id === parseInt(builderId));
+        const initialTask = builder ? builder.currentTask : null;
+        
+        // Update the schedule builder header
+        if (scheduleHeaderElement) {
+            if (initialTask) {
+                scheduleHeaderElement.innerHTML = `
+                    <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    ${baseBuilderName} - ${initialTask}
+                `;
+            } else {
+                scheduleHeaderElement.innerHTML = `
+                    <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    ${baseBuilderName}
+                `;
+            }
+        }
+        
+        // Update the timeline builder header
+        if (timelineHeaderElement) {
+            if (initialTask) {
+                timelineHeaderElement.innerHTML = `
+                    <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    ${baseBuilderName} - ${initialTask}
+                `;
+            } else {
+                timelineHeaderElement.innerHTML = `
+                    <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    ${baseBuilderName}
+                `;
+            }
+        }
+    }
+    
+    // Update the timeline to show tasks from the first checked task forward
+    renderTimeline();
+    
+    // Save to localStorage to persist the changes
+    saveToLocalStorage();
 }
 
 // Format date for display
@@ -739,19 +884,24 @@ function formatDate(date) {
     });
 }
 
-// Render timeline - new implementation for better handling of long periods
+// Render timeline with tasks starting from the first checked task
 function renderTimeline() {
     const timelineViewport = document.getElementById('timelineViewport');
     const emptyTimelineMessage = document.getElementById('emptyTimelineMessage');
     timelineViewport.innerHTML = '';
     
-    if (schedule.length === 0) {
+    // If no schedule or no checked tasks, show empty message
+    if (schedule.length === 0 || Object.keys(selectedScheduleTasks).length === 0) {
         timelineViewport.innerHTML = '';
         emptyTimelineMessage.classList.remove('hidden');
         return;
     }
     
     emptyTimelineMessage.classList.add('hidden');
+    
+    // Create a container for the timeline
+    const timelineContainer = document.createElement('div');
+    timelineContainer.className = 'space-y-6';
     
     // Group schedule by builder
     const builderSchedules = {};
@@ -762,182 +912,217 @@ function renderTimeline() {
         builderSchedules[item.builderId].push(item);
     });
     
-    // Sort builders by ID
-    const sortedBuilderIds = Object.keys(builderSchedules).sort((a, b) => parseInt(a) - parseInt(b));
-    
-    // Create a container for each builder's timeline
-    const timelineContainer = document.createElement('div');
-    timelineContainer.className = 'space-y-6';
-    
-    // Process each builder's schedule
-    sortedBuilderIds.forEach(builderId => {
-        const builderItems = builderSchedules[builderId];
-        const builderName = builderItems[0].builderName;
+    // Process each builder that has a checked task
+    Object.keys(selectedScheduleTasks).forEach(builderId => {
+        const builderItems = builderSchedules[builderId] || [];
+        const firstCheckedIndex = firstCheckedTaskIndices[builderId] || 0;
         
-        // Sort tasks by start time
-        builderItems.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+        // If no items or invalid index, skip
+        if (builderItems.length === 0 || firstCheckedIndex >= builderItems.length) {
+            return;
+        }
+        
+        // Get tasks from the first checked one to the end
+        const tasksToShow = builderItems.slice(firstCheckedIndex);
         
         // Create builder section
-        const builderSection = document.createElement('div');
-        builderSection.className = 'bg-white rounded-lg shadow-sm p-4 border border-gray-200';
-        
-        // Builder header
-        const builderHeader = document.createElement('div');
-        builderHeader.className = 'flex items-center justify-between mb-3';
-        
-        const builderTitle = document.createElement('h3');
-        builderTitle.className = 'font-medium text-gray-800 flex items-center';
-        builderTitle.innerHTML = `
-            <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
-            ${builderName}
-        `;
-        
-        const taskCount = document.createElement('span');
-        taskCount.className = 'text-xs font-medium bg-indigo-100 text-indigo-800 py-1 px-2 rounded-full';
-        taskCount.textContent = `${builderItems.length} tasks`;
-        
-        builderHeader.appendChild(builderTitle);
-        builderHeader.appendChild(taskCount);
-        builderSection.appendChild(builderHeader);
-        
-        // Builder timeline
-        const timeline = document.createElement('div');
-        timeline.className = 'space-y-2 mt-2';
-        
-        // Add individual task items
-        builderItems.forEach((item, index) => {
-            const taskItem = document.createElement('div');
-            taskItem.className = 'relative flex items-start';
-            
-            // Timeline dot and line
-            const timelineDot = document.createElement('div');
-            timelineDot.className = `flex-shrink-0 w-4 h-4 rounded-full ${item.isGoodTime ? 'bg-green-500' : 'bg-yellow-500'} mt-1`;
-            
-            // Add connecting line if not the last item
-            if (index < builderItems.length - 1) {
-                const connectingLine = document.createElement('div');
-                connectingLine.className = 'absolute h-full w-0.5 bg-gray-200 left-[7px] top-4';
-                taskItem.appendChild(connectingLine);
-            }
-            
-            // Task content
-            const taskContent = document.createElement('div');
-            taskContent.className = 'ml-4 flex-grow pb-5';
-            
-            // Task header with time and status
-            const taskHeader = document.createElement('div');
-            taskHeader.className = 'flex items-center justify-between';
-            
-            const taskName = document.createElement('h4');
-            taskName.className = 'text-sm font-medium text-gray-900';
-            taskName.textContent = item.buildingName;
-            
-            const taskCategory = document.createElement('span');
-            let categoryColor = '';
-            switch(item.buildingCategory) {
-                case 'defense': categoryColor = 'bg-red-100 text-red-800'; break;
-                case 'resource': categoryColor = 'bg-yellow-100 text-yellow-800'; break;
-                case 'army': categoryColor = 'bg-purple-100 text-purple-800'; break;
-                case 'wall': categoryColor = 'bg-blue-100 text-blue-800'; break;
-                default: categoryColor = 'bg-gray-100 text-gray-800';
-            }
-            taskCategory.className = `text-xs ${categoryColor} px-2 py-0.5 rounded-full ml-2`;
-            taskCategory.textContent = item.buildingCategory.charAt(0).toUpperCase() + item.buildingCategory.slice(1);
-            
-            taskHeader.appendChild(taskName);
-            taskHeader.appendChild(taskCategory);
-            
-            // Time information
-            const timeInfo = document.createElement('div');
-            timeInfo.className = 'mt-1 text-xs text-gray-500 flex items-center';
-            
-            const startTime = new Date(item.startTime);
-            const endTime = new Date(item.endTime);
-            
-            const formattedStartTime = startTime.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            const formattedEndTime = endTime.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            timeInfo.innerHTML = `
-                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                ${formattedStartTime} - ${formattedEndTime} (${item.durationText})
-            `;
-            
-            // Priority indicator
-            const priorityLabel = document.createElement('div');
-            priorityLabel.className = 'mt-1 flex items-center';
-            
-            let priorityText = '';
-            let priorityColor = '';
-            switch(item.priority) {
-                case 'high': 
-                    priorityText = 'High Priority';
-                    priorityColor = 'text-red-500';
-                    break;
-                case 'medium': 
-                    priorityText = 'Medium Priority';
-                    priorityColor = 'text-yellow-500';
-                    break;
-                case 'low': 
-                    priorityText = 'Low Priority';
-                    priorityColor = 'text-green-500';
-                    break;
-            }
-            
-            priorityLabel.innerHTML = `
-                <span class="text-xs ${priorityColor} flex items-center">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    ${priorityText}
-                </span>
-                
-                <span class="text-xs ml-2 flex items-center ${item.isGoodTime ? 'text-green-500' : 'text-yellow-500'}">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    ${item.isGoodTime ? 'Optimal Time' : 'Suboptimal Time'}
-                </span>
-            `;
-            
-            // Assemble task content
-            taskContent.appendChild(taskHeader);
-            taskContent.appendChild(timeInfo);
-            taskContent.appendChild(priorityLabel);
-            
-            // Assemble task item
-            taskItem.appendChild(timelineDot);
-            taskItem.appendChild(taskContent);
-            
-            // Add to timeline
-            timeline.appendChild(taskItem);
-        });
-        
-        builderSection.appendChild(timeline);
-        timelineContainer.appendChild(builderSection);
+        const builderSection = createBuilderTimelineSection(builderId, tasksToShow);
+        if (builderSection) {
+            timelineContainer.appendChild(builderSection);
+        }
     });
     
     timelineViewport.appendChild(timelineContainer);
 }
 
-// Timeline mobile navigation functions is no longer needed since we've simplified the timeline
-function initTimelineControls() {
-    // Nothing to do with the new implementation
-    // The new timeline is scrollable by default and doesn't need special controls
+// Helper function to create a builder timeline section with the given items
+function createBuilderTimelineSection(builderId, builderItems) {
+    if (!builderItems || builderItems.length === 0) return null;
+    
+    const baseBuilderName = builderItems[0].builderName;
+    
+    // Get the builder's initial task from builder status
+    const builder = builders.find(b => b.id === parseInt(builderId));
+    const initialTask = builder ? builder.currentTask : null;
+    
+    // Determine the builder display name
+    let builderDisplayName = baseBuilderName;
+    
+    // If we have a selected task for this builder, use that for the name
+    if (selectedScheduleTasks[builderId]) {
+        const selectedTask = builderItems.find(item => item.buildingId === selectedScheduleTasks[builderId]);
+        if (selectedTask) {
+            builderDisplayName = `${baseBuilderName} - ${selectedTask.buildingName}`;
+        }
+    // Otherwise, if there's an initial task from builder status, use that
+    } else if (initialTask) {
+        builderDisplayName = `${baseBuilderName} - ${initialTask}`;
+    }
+    
+    // Create builder section
+    const builderSection = document.createElement('div');
+    builderSection.className = 'bg-white rounded-xl shadow-sm p-5 border border-gray-200';
+    
+    // Builder header
+    const builderHeader = document.createElement('div');
+    builderHeader.className = 'flex items-center justify-between mb-3';
+    
+    const builderTitle = document.createElement('h3');
+    builderTitle.className = 'font-medium text-gray-800 flex items-center';
+    builderTitle.id = `timelineBuilderHeader_${builderId}`;
+    builderTitle.innerHTML = `
+        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+        ${builderDisplayName}
+    `;
+    
+    const taskCount = document.createElement('span');
+    taskCount.className = 'text-xs font-medium bg-indigo-100 text-indigo-800 py-1 px-3 rounded-full';
+    taskCount.textContent = `${builderItems.length} tasks`;
+    
+    builderHeader.appendChild(builderTitle);
+    builderHeader.appendChild(taskCount);
+    builderSection.appendChild(builderHeader);
+    
+    // Builder timeline
+    const timeline = document.createElement('div');
+    timeline.className = 'space-y-4 mt-3';
+    
+    // Add individual task items
+    builderItems.forEach((item, index) => {
+        const taskItem = createTimelineTaskItem(item, index, builderItems.length);
+        timeline.appendChild(taskItem);
+    });
+    
+    builderSection.appendChild(timeline);
+    return builderSection;
+}
+
+// Helper function to create a timeline task item
+function createTimelineTaskItem(item, index, totalItems) {
+    const taskItem = document.createElement('div');
+    taskItem.className = 'relative bg-white rounded-lg border shadow-sm p-4 transition-all hover:shadow-md';
+    
+    // Determine status class
+    let statusClass = 'bg-yellow-100 text-yellow-800'; // Default: In progress
+    let statusText = 'Sedang';
+    
+    if (index === 0) {
+        statusClass = 'bg-green-100 text-green-800';
+        statusText = 'Aktif';
+    } else if (index === totalItems - 1) {
+        statusClass = 'bg-blue-100 text-blue-800';
+        statusText = 'Terakhir';
+    }
+    
+    // Format dates for display
+    const startDate = new Date(item.startTime).toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit'
+    });
+    
+    const startTime = new Date(item.startTime).toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const endDate = new Date(item.endTime).toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit'
+    });
+    
+    const endTime = new Date(item.endTime).toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // Determine category icon
+    let categoryIcon = '';
+    switch(item.buildingCategory) {
+        case 'defense': 
+            categoryIcon = `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+            </svg>`;
+            break;
+        case 'resource': 
+            categoryIcon = `<svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>`;
+            break;
+        case 'army': 
+            categoryIcon = `<svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>`;
+            break;
+        case 'wall': 
+            categoryIcon = `<svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+            </svg>`;
+            break;
+        default: 
+            categoryIcon = `<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+            </svg>`;
+    }
+    
+    taskItem.innerHTML = `
+        <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0 mt-1">
+                ${categoryIcon}
+            </div>
+            <div class="flex-grow">
+                <div class="flex justify-between items-start">
+                    <h4 class="text-lg font-medium text-gray-800">${item.buildingName}</h4>
+                    <span class="px-2 py-1 text-xs rounded-full ${statusClass}">
+                        ${statusText}
+                    </span>
+                </div>
+                <div class="mt-2 grid grid-cols-2 gap-x-2 gap-y-1">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        ${startDate} ${startTime}
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        ${item.durationText}
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        ${item.builderName}
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                        ${endDate} ${endTime}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return taskItem;
+}
+
+// ... existing helper functions ...
+
+// Save data to localStorage
+function saveToLocalStorage() {
+    localStorage.setItem('cocUpgradePlanner', JSON.stringify({
+        builders: builders,
+        buildings: buildings,
+        schedule: schedule,
+        builderCount: userBuilderCount,
+        selectedScheduleTasks: selectedScheduleTasks,
+        firstCheckedTaskIndices: firstCheckedTaskIndices
+    }));
 }
 
 // Load data from localStorage
@@ -984,6 +1169,16 @@ function loadFromLocalStorage() {
             }));
         }
         
+        // Load selected schedule tasks if available
+        if (parsed.selectedScheduleTasks) {
+            selectedScheduleTasks = parsed.selectedScheduleTasks;
+        }
+        
+        // Load first checked task indices if available
+        if (parsed.firstCheckedTaskIndices) {
+            firstCheckedTaskIndices = parsed.firstCheckedTaskIndices;
+        }
+        
         renderBuilders();
         renderBuildingQueue();
         renderSchedule();
@@ -991,31 +1186,11 @@ function loadFromLocalStorage() {
     }
 }
 
-// Save data to localStorage
-function saveToLocalStorage() {
-    localStorage.setItem('cocUpgradePlanner', JSON.stringify({
-        builders: builders,
-        buildings: buildings,
-        schedule: schedule,
-        builderCount: userBuilderCount
-    }));
-}
-
-// Format date time local
-function formatDateTimeLocal(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-}
-
 // Clear schedule
 function clearSchedule() {
     schedule = [];
+    selectedScheduleTasks = {}; // Clear selected tasks when clearing schedule
+    firstCheckedTaskIndices = {}; // Clear first checked task indices when clearing schedule
     renderSchedule();
     renderTimeline();
     saveToLocalStorage();
